@@ -1,0 +1,41 @@
+* {
+    box-sizing: border-box;
+    transition: all ease 0.2s;
+    word-break: break-all;
+  }
+  
+  body {
+    font-family: "Roboto", sans-serif;
+    background-color: #fafafa;
+  }
+  
+  .topo {
+    background-color: #ec362d;
+  
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #fff;
+    font-size: 27px;
+    font-weight: bold;
+    box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.25);
+  
+    position: fixed;
+    top: 0;
+    left: 0;
+  
+    height: 69px;
+    width: 100%;
+  
+    z-index: 2;
+  }
+  
+  .app {
+    height: calc(100vh - 69px);
+    /* margin: 69px 0 31px; */
+    position: fixed;
+    top: 69px;
+    left: 0;
+    width: 100%;
+    overflow-y: auto;
+  }
