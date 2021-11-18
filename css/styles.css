@@ -111,3 +111,38 @@ body {
   filter: brightness(90%);
 }
 
+.page-create-quizz .entries .title-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 20px;
+  width: 100%;
+}
+
+.page-create-quizz .entries .toggle {
+  cursor: pointer;
+}
+
+.page-create-quizz .entries .body-card {
+  display: none;
+}
+
+.page-create-quizz .entries.expanded .body-card {
+  display: initial;
+}
+
+.page-create-quizz .label {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.page-create-quizz .group {
+  margin: 16px 0;
+}
+
+.page-create-quizz .entries {
+  margin: 20px 0;
+}
+
