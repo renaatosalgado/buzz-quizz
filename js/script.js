@@ -7,26 +7,27 @@ function listQuizzes(){
   `
     <div class="your-quizzes not-created">
       <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
-      <button class="create-quizz-btn" data-identifier="create-quizz">Criar Quizz</button>
+      <button class="create-quizz-btn" data-identifier="create-quizz" onclick="generateQuizz()">Criar Quizz</button>
     </div>
     <div class="general-quizzes" data-identifier="general-quizzes">
     <p class="all-quizzes-title">Todos os Quizzes</>
+    <div class="general-quizzes-list"></div>
     </div>
   ` 
-
-  let yourQuizzes = 
-  `
-    <div class="your-quizzes">
-      <div class="your-quizzes-header">
-        <p class="">Seus Quizzes</p>
-        <ion-icon name="add-circle" class=""></ion-icon>
-      </div>
-      <div class="your-quizzes-list"></div>
-    </div>
-  `
-  const createQuizzMenu = document.querySelector('.your-quizzes')
-  createQuizzMenu.innerHTML = yourQuizzes
-  createQuizzMenu.classList.replace('not-created','created')
+// CÓDIGO A SER ADICIONADO QUANDO HOUVER QUIZZES CRIADOS
+  // let yourQuizzes = 
+  // `
+  //   <div class="your-quizzes">
+  //     <div class="your-quizzes-header">
+  //       <p class="">Seus Quizzes</p>
+  //       <ion-icon name="add-circle" class=""></ion-icon>
+  //     </div>
+  //     <div class="your-quizzes-list"></div>
+  //   </div>
+  // `
+  // const createQuizzMenu = document.querySelector('.your-quizzes')
+  // createQuizzMenu.innerHTML = yourQuizzes
+  // createQuizzMenu.classList.replace('not-created','created')
 
 
   const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes')
@@ -36,7 +37,7 @@ function listQuizzes(){
 function loadQuizzes(answer){
   console.log(answer)
   let quizzes = answer.data
-  const allQuizzes = document.querySelector('.general-quizzes')
+  const allQuizzes = document.querySelector('.general-quizzes-list')
   const yourQuizzes = document.querySelector('.your-quizzes-list')
   for(let i=0; i<quizzes.length; i++){
     let serverQuizz = quizzes[i]
@@ -44,7 +45,7 @@ function loadQuizzes(answer){
     if('questions' in serverQuizz){
       allQuizzes.innerHTML += 
       `
-        <div class="server-quizz" onclick="screen2(this)">
+        <div class="server-quizz" onclick="selectQuizz(this)">
           <img src='${serverQuizz.image}'/>
           <div class="gradient">
           </div>
@@ -65,17 +66,17 @@ function loadQuizzes(answer){
           <p class="quizz-title">${serverQuizz.title} </p>
         </div>
       `
-      yourQuizzes.innerHTML += 
-      `
-      <div class="your-quizz" onclick="screen2(this)">
-          <img src='${serverQuizz.image}'/>
-          <div class="gradient">
-          </div>
-          <p class="quizz-title">${serverQuizz.title} </p>
-        </div>
-      `
-      // 
-
+      // Forçando quizzes criados pelo usuário. Feito para testes
+      
+      // yourQuizzes.innerHTML += 
+      // `
+      // <div class="your-quizz" onclick="screen2(this)">
+      //     <img src='${serverQuizz.image}'/>
+      //     <div class="gradient">
+      //     </div>
+      //     <p class="quizz-title">${serverQuizz.title} </p>
+      //   </div>
+      // `
     }
   }
 }
