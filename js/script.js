@@ -2,6 +2,85 @@ const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
 const APP = document.querySelector(".app");
 
 //============== TELA 01 ==============//
+function listQuizzes(){
+  APP.innerHTML = 
+  `
+    <div class="your-quizzes not-created">
+      <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
+      <button class="create-quizz-btn" data-identifier="create-quizz">Criar Quizz</button>
+    </div>
+    <div class="general-quizzes" data-identifier="general-quizzes">
+    <p class="all-quizzes-title">Todos os Quizzes</>
+    </div>
+  ` 
+
+  let yourQuizzes = 
+  `
+    <div class="your-quizzes">
+      <div class="your-quizzes-header">
+        <p class="">Seus Quizzes</p>
+        <ion-icon name="add-circle" class=""></ion-icon>
+      </div>
+      <div class="your-quizzes-list"></div>
+    </div>
+  `
+  const createQuizzMenu = document.querySelector('.your-quizzes')
+  createQuizzMenu.innerHTML = yourQuizzes
+  createQuizzMenu.classList.replace('not-created','created')
+
+
+  const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes')
+  promise.then(loadQuizzes)
+}
+
+function loadQuizzes(answer){
+  console.log(answer)
+  let quizzes = answer.data
+  const allQuizzes = document.querySelector('.general-quizzes')
+  const yourQuizzes = document.querySelector('.your-quizzes-list')
+  for(let i=0; i<quizzes.length; i++){
+    let serverQuizz = quizzes[i]
+
+    if('questions' in serverQuizz){
+      allQuizzes.innerHTML += 
+      `
+        <div class="server-quizz" onclick="screen2(this)">
+          <img src='${serverQuizz.image}'/>
+          <div class="gradient">
+          </div>
+          <p class="quizz-title">${serverQuizz.title} </p>
+        </div>
+
+        <div class="server-quizz">
+          <img src='${serverQuizz.image}'/>
+          <div class="gradient">
+          </div>
+          <p class="quizz-title">${serverQuizz.title} </p>
+        </div>
+
+        <div class="server-quizz">
+          <img src='${serverQuizz.image}'/>
+          <div class="gradient">
+          </div>
+          <p class="quizz-title">${serverQuizz.title} </p>
+        </div>
+      `
+      yourQuizzes.innerHTML += 
+      `
+      <div class="your-quizz" onclick="screen2(this)">
+          <img src='${serverQuizz.image}'/>
+          <div class="gradient">
+          </div>
+          <p class="quizz-title">${serverQuizz.title} </p>
+        </div>
+      `
+      // 
+
+    }
+  }
+}
+
+listQuizzes()
 
 //============== TELA 02 ==============//
 
@@ -240,4 +319,4 @@ function checkColor(color) {
   return rule.test(color);
 }
 
-generateQuizz(); // coloquei essa função inicial somente para testar o layout, pode remover ela
+// generateQuizz(); // coloquei essa função inicial somente para testar o layout, pode remover ela
