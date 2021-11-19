@@ -1,4 +1,4 @@
-const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
+const URL_API = "https://mock-api.driven.com.br/api/v4/buzzquizz";
 const APP = document.querySelector(".app");
 
 //============== TELA 01 ==============//
@@ -103,7 +103,7 @@ function generateQuestionCard(index) {
     <div class="question entries ${questionClass}">
       <div class="title-card">
         <div class="label">Pergunta ${index + 1}</div>
-        <div class="toggle" onclick="showItem(this)">
+        <div class="toggle" onclick="showItem(this), scrollToCard(this)">
           <ion-icon name="create-outline"></ion-icon>
         </div>
       </div>
@@ -159,7 +159,7 @@ function saveQuizzQuestions() {
     const correctAnswer = {
       text: document.querySelector(`.question-${i}-correct-answer`).value,
       image: document.querySelector(`.question-${i}-correct-url`).value,
-      IsCorrectAnswer: true,
+      isCorrectAnswer: true,
     };
 
     question.answers.push(correctAnswer);
@@ -168,7 +168,7 @@ function saveQuizzQuestions() {
       const answer = {
         text: document.querySelector(`.question-${i}-wrong-${j} .answer`).value,
         image: document.querySelector(`.question-${i}-wrong-${j} .url`).value,
-        IsCorrectAnswer: false,
+        isCorrectAnswer: false,
       };
 
       if (answer.text.length === 0) {
@@ -189,15 +189,15 @@ function checkQuizzQuestions() {
     const question = CREATED_QUIZZ.questions[i];
 
     if (question.title.length < 20) {
-      console.log("titulo errado")
+      console.log("titulo errado");
       return false;
     } else if (!checkColor(question.color)) {
-      console.log("cor errada pergunta")
+      console.log("cor errada pergunta");
       return false;
     }
 
     if (question.answers.length < 2) {
-      console.log("qtd respostas errada")
+      console.log("qtd respostas errada");
       return false;
     }
 
@@ -205,16 +205,148 @@ function checkQuizzQuestions() {
       const answer = question.answers[j];
 
       if (answer.text.length === 0) {
-        console.log("resposta nula")
+        console.log("resposta nula");
         return false;
       } else if (!checkURL(answer.image)) {
-        console.log("url errada resposta")
+        console.log("url errada resposta");
         return false;
       }
     }
   }
 
   return true;
+}
+
+function generateLevelCard(index) {
+  let levelClass = "";
+
+  if (index === 0) {
+    levelClass = "expanded";
+  }
+
+  return `
+    <div class="level entries ${levelClass}">
+      <div class="title-card">
+        <div class="label">Nível ${index + 1}</div>
+        <div class="toggle" onclick="showItem(this), scrollToCard(this)">
+          <ion-icon name="create-outline"></ion-icon>
+        </div>
+      </div>
+
+      <div class="body-card">
+        <input type="text" class="level-${index}-title" placeholder="Título do nível" />
+        <input type="text" class="level-${index}-success" placeholder="% de acerto mínima" />
+        <input type="text" class="level-${index}-url" placeholder="URL da imagem do nível" />
+        <input type="text" class="level-${index}-description" placeholder="Descrição do nível" />
+      </div>
+    </div>
+  `;
+}
+
+function saveQuizzLevel() {
+  CREATED_QUIZZ.levels = [];
+
+  for (let i = 0; i < CREATED_QUIZZ.qttLevels; i++) {
+    const level = {
+      title: document.querySelector(`.level-${i}-title`).value,
+      minValue: parseInt(document.querySelector(`.level-${i}-success`).value),
+      image: document.querySelector(`.level-${i}-url`).value,
+      text: document.querySelector(`.level-${i}-description`).value,
+    };
+
+    CREATED_QUIZZ.levels.push(level);
+  }
+}
+
+function checkQuizzLevels() {
+  saveQuizzLevel();
+  let levelZero = false;
+
+  for (let i = 0; i < CREATED_QUIZZ.levels.length; i++) {
+    const level = CREATED_QUIZZ.levels[i];
+
+    if (level.minValue === 0) {
+      levelZero = true;
+    }
+
+    if (level.title.length < 10) {
+      return false;
+    } else if (level.minValue < 0 || level.minValue > 100) {
+      return false;
+    } else if (!checkURL(level.image)) {
+      return false;
+    } else if (level.text.length < 30) {
+      return false;
+    }
+  }
+
+  return levelZero;
+}
+
+function createQuizzSuccess(id) {
+  APP.innerHTML = `
+    <div class="page-create-quizz">
+      <div class="title">Seu quizz está pronto!</div>
+
+      <div class="quizz" onclick="showQuizz(${id})">
+        <img src="${CREATED_QUIZZ.image}">
+        <div class="overlay"></div>
+        <div class="title">${CREATED_QUIZZ.title}</div>
+      </div>
+
+      <button class="access-quizz" onclick="showQuizz(${id})">Acessar Quizz</button>
+      <button class="go-back" onclick="getQuizzes()">Voltar pra home</button>
+    </div>  
+  `;
+}
+
+function getQuizzesLocalStorage() {
+  let data = localStorage.getItem("quizzes");
+
+  if (data !== null) {
+    const parsedData = JSON.parse(data);
+    return parsedData;
+  } else {
+    return [];
+  }
+}
+
+function saveQuizzLocalStorage(res) {
+  const quizz = res.data;
+
+  const localData = getQuizzesLocalStorage();
+
+  localData.push({
+    id: quizz.id,
+    key: quizz.key,
+  });
+
+  localStorage.setItem("quizzes", JSON.stringify(localData));
+
+  createQuizzSuccess(quizz.id);
+}
+
+function saveQuizz() {
+  const data = {
+    title: CREATED_QUIZZ.title,
+    image: CREATED_QUIZZ.image,
+    questions: CREATED_QUIZZ.questions,
+    levels: CREATED_QUIZZ.levels,
+  };
+
+  const promise = axios.post(`${URL_API}/quizzes`, data);
+  promise.then(saveQuizzLocalStorage);
+}
+
+function completeQuizz() {
+  const valid = checkQuizzLevels();
+
+  if (!valid) {
+    alert("Preencha os dados corretamente!");
+    return;
+  }
+
+  saveQuizz();
 }
 
 function generateLevels() {
@@ -224,7 +356,22 @@ function generateLevels() {
     alert("Preencha os dados corretamente!");
     return;
   }
-  alert("deu tudo certo nas perguntas");
+
+  let levels = "";
+
+  for (let i = 0; i < CREATED_QUIZZ.qttLevels; i++) {
+    levels += generateLevelCard(i);
+  }
+
+  APP.innerHTML = `
+    <div class="page-create-quizz">
+      <div class="title">Agora, decida os níveis</div>
+
+      ${levels}
+
+      <button class="proceed" onclick="completeQuizz()">Finalizar Quizz</button>
+    </div>
+  `;
 }
 
 //============== AUX FUNCTIONS ==============//
@@ -238,6 +385,14 @@ function checkURL(url) {
 function checkColor(color) {
   const rule = /^\#([0-9]|[A-F]|[a-f]){6}$/;
   return rule.test(color);
+}
+
+function scrollToCard(element) {
+  function scroll() {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+
+  setTimeout(scroll, 100);
 }
 
 generateQuizz(); // coloquei essa função inicial somente para testar o layout, pode remover ela
