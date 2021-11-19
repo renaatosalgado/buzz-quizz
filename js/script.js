@@ -1,9 +1,66 @@
 const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
+const QUIZZES_API ="https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
 const APP = document.querySelector(".app");
+
 
 //============== TELA 01 ==============//
 
 //============== TELA 02 ==============//
+
+
+function frame_2(){
+  let prommisse_quiz_selected=axios.get(QUIZZES_API);
+  prommisse_quiz_selected.then(load_quiz)
+  prommisse_quiz_selected.catch(console.log("Eita"))
+
+  function load_quiz(response){
+    let quiz_data=response.data;
+    let quiz_selecionado=quiz_data[1];// aqui vai o quiz selecionado
+    let questions = quiz_selecionado.questions; // aqui vai as questões 
+    //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
+    console.log(questions);
+    
+    APP.innerHTML=`   
+      <div class="top-quiz-container">
+      <img class ="icon-main-image"src="${quiz_selecionado.image}" alt="">
+      <span  class="quiz-title">${quiz_selecionado.title}</span>
+      </div>
+      <div class="quiz-container">         
+      </div>
+    `;
+    for(let i=0;i<questions.length;i++){
+      let answers = (questions[i].answers).sort(randOrd)
+
+      APP.querySelector(".quiz-container").innerHTML +=
+      `
+      <div class="question-container">
+        <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
+        <div class="quiz-answers">
+          <div class="answer">
+            <img src="${answers[0].image}" alt="">
+            <p>${answers[0].text}</p>
+          </div>
+          <div class="answer">
+            <img src="${answers[1].image}" alt="">
+            <p>${answers[1].text}</p> 
+          </div>
+          <div class="answer">
+            <img src="${answers[2].image}" alt="">
+            <p>${answers[2].text}</p>
+          </div>
+          <div class="answer">
+            <img src="${answers[3].image}" alt="">
+            <p>${answers[3].text}</p>
+          </div>
+        </div>
+      </div>    
+      `
+    }}}
+
+frame_2() // função de teste  para a tela 2
+
+
+
 
 //============== TELA 03 ==============//
 
@@ -73,11 +130,13 @@ function quizzGeneratorQuestions() {
 }
 
 //============== AUX FUNCTIONS ==============//
-
+function randOrd(){ //função para embaralhar as respostas
+  return (Math.round(Math.random())-0.5);
+}
 function checkURL(url) {
   const rule =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
   return rule.test(url);
 }
 
-quizzGenerator(); // coloquei essa função inicial somente para testar o layout, pode remover ela
+//quizzGenerator(); // coloquei essa função inicial somente para testar o layout, pode remover ela
