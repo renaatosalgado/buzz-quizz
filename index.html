@@ -8,15 +8,19 @@
       type="image/png"
       href="https://www.google.com/s2/u/0/favicons?domain=buzzfeed.com/quizzes"
     />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Righteous&family=Roboto:ital,wght@0,100;0,300;0,400;0,500;0,700;1,400&display=swap" rel="stylesheet">
+
     <link rel="stylesheet" href="css/reset.css" />
     <link rel="stylesheet" href="css/styles.css" />
     <title>BuzzQuizz</title>
   </head>
 
   <body>
-    <div class="top-bar">BuzzQuizz</div>
-    <div class="app"></div>
-
+    <div class="top-bar" onclick="listQuizzes()">BuzzQuizz</div>
+    <div class="app">
+    </div>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/axios/0.21.1/axios.min.js"></script>
     <script src="https://unpkg.com/ionicons@5.4.0/dist/ionicons.js"></script>
     <script src="js/script.js"></script>

@@ -1,9 +1,132 @@
-const URL_API = "https://mock-api.driven.com.br/api/v4/buzzquizz";
+const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
+const QUIZZES_API ="https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
 const APP = document.querySelector(".app");
 
+
 //============== TELA 01 ==============//
+function listQuizzes(){
+  APP.innerHTML = 
+  `
+    <div class="your-quizzes not-created">
+      <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
+      <button class="create-quizz-btn" data-identifier="create-quizz" onclick="generateQuizz()">Criar Quizz</button>
+    </div>
+    <div class="general-quizzes" data-identifier="general-quizzes">
+    <p class="all-quizzes-title">Todos os Quizzes</>
+    <div class="general-quizzes-list"></div>
+    </div>
+  ` 
+// CÓDIGO A SER ADICIONADO QUANDO HOUVER QUIZZES CRIADOS
+  // let yourQuizzes = 
+  // `
+  //   <div class="your-quizzes">
+  //     <div class="your-quizzes-header">
+  //       <p class="">Seus Quizzes</p>
+  //       <ion-icon name="add-circle" class=""></ion-icon>
+  //     </div>
+  //     <div class="your-quizzes-list"></div>
+  //   </div>
+  // `
+  // const createQuizzMenu = document.querySelector('.your-quizzes')
+  // createQuizzMenu.innerHTML = yourQuizzes
+  // createQuizzMenu.classList.replace('not-created','created')
+
+
+  const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes')
+  promise.then(loadQuizzes)
+}
+
+function loadQuizzes(answer){
+  console.log(answer)
+  let quizzes = answer.data
+  const allQuizzes = document.querySelector('.general-quizzes-list')
+  const yourQuizzes = document.querySelector('.your-quizzes-list')
+  for(let i=0; i<quizzes.length; i++){
+    let serverQuizz = quizzes[i]
+
+    if('questions' in serverQuizz){
+      allQuizzes.innerHTML += 
+      `
+        <div class="server-quizz" onclick="selectQuizz(this)">
+          <img src='${serverQuizz.image}'/>
+          <div class="gradient">
+          </div>
+          <p class="quizz-title">${serverQuizz.title} </p>
+        </div>
+      `
+      // Forçando quizzes criados pelo usuário. Feito para testes
+      
+      // yourQuizzes.innerHTML += 
+      // `
+      // <div class="your-quizz" onclick="screen2(this)">
+      //     <img src='${serverQuizz.image}'/>
+      //     <div class="gradient">
+      //     </div>
+      //     <p class="quizz-title">${serverQuizz.title} </p>
+      //   </div>
+      // `
+    }
+  }
+}
+
+listQuizzes()
 
 //============== TELA 02 ==============//
+
+
+function frame_2(){
+  let prommisse_quiz_selected=axios.get(QUIZZES_API);
+  prommisse_quiz_selected.then(load_quiz)
+  prommisse_quiz_selected.catch(console.log("Eita"))
+
+  function load_quiz(response){
+    let quiz_data=response.data;
+    let quiz_selecionado=quiz_data[1];// aqui vai o quiz selecionado
+    let questions = quiz_selecionado.questions; // aqui vai as questões 
+    //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
+    console.log(questions);
+    
+    APP.innerHTML=`   
+      <div class="top-quiz-container">
+      <img class ="icon-main-image"src="${quiz_selecionado.image}" alt="">
+      <span  class="quiz-title">${quiz_selecionado.title}</span>
+      </div>
+      <div class="quiz-container">         
+      </div>
+    `;
+    for(let i=0;i<questions.length;i++){
+      let answers = (questions[i].answers).sort(randOrd)
+
+      APP.querySelector(".quiz-container").innerHTML +=
+      `
+      <div class="question-container">
+        <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
+        <div class="quiz-answers">
+          <div class="answer">
+            <img src="${answers[0].image}" alt="">
+            <p>${answers[0].text}</p>
+          </div>
+          <div class="answer">
+            <img src="${answers[1].image}" alt="">
+            <p>${answers[1].text}</p> 
+          </div>
+          <div class="answer">
+            <img src="${answers[2].image}" alt="">
+            <p>${answers[2].text}</p>
+          </div>
+          <div class="answer">
+            <img src="${answers[3].image}" alt="">
+            <p>${answers[3].text}</p>
+          </div>
+        </div>
+      </div>    
+      `
+    }}}
+
+//frame_2() // função de teste  para a tela 2
+
+
+
 
 //============== TELA 03 ==============//
 
@@ -375,7 +498,9 @@ function generateLevels() {
 }
 
 //============== AUX FUNCTIONS ==============//
-
+function randOrd(){ //função para embaralhar as respostas
+  return (Math.round(Math.random())-0.5);
+}
 function checkURL(url) {
   const rule =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;
@@ -394,5 +519,3 @@ function scrollToCard(element) {
 
   setTimeout(scroll, 100);
 }
-
-generateQuizz(); // coloquei essa função inicial somente para testar o layout, pode remover ela
