@@ -111,6 +111,7 @@ body {
   filter: brightness(90%);
 }
 
+
 /*Aqui para baixo estilo page 2*/
 .top-quiz-container{
   position: relative;
@@ -199,3 +200,278 @@ span.quiz-title{
 }
 }
 /*Aqui para cima estilo page 2*/
+
+.page-create-quizz .entries .title-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  font-size: 20px;
+  width: 100%;
+}
+
+.page-create-quizz .entries .toggle {
+  cursor: pointer;
+}
+
+.page-create-quizz .entries .body-card {
+  display: none;
+}
+
+.page-create-quizz .entries.expanded .body-card {
+  display: initial;
+}
+
+.page-create-quizz .label {
+  font-size: 20px;
+  font-weight: bold;
+  margin: 10px 0;
+}
+
+.page-create-quizz .group {
+  margin: 16px 0;
+}
+
+.page-create-quizz .entries {
+  margin: 20px 0;
+}
+
+/******************** Tela 1 *******************/
+
+.your-quizzes.created{
+  width: 1050px;
+  height: 181px;
+
+  margin: 77px auto 90px auto;
+  border-radius: 5px;
+}
+
+.your-quizzes-header{
+  display: flex;
+  width: 170px;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+
+}
+
+.your-quizzes-header ion-icon{
+  font-size: 30px;
+  color: #EC362D;
+}
+
+.your-quizzes-header p{
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 23px;
+  color: #000000;
+
+
+}
+
+.your-quizzes-list{
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.your-quizz{
+  width: 340px;
+  height: 181px;
+  position: relative;
+  border-radius: 5px;
+  border-radius: 5px;
+}
+
+.your-quizz img{
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.your-quizz p{
+  margin: 0 19px;
+  position: absolute;
+  bottom: 15px;
+
+  font-family: Roboto;
+  font-size: 19px;
+  line-height: 22px;
+  color: #fff;
+  word-break: keep-all;
+}
+
+.your-quizzes.not-created{
+  width: 1050px;
+  height: 181px;
+
+  margin: 77px auto 90px auto;
+  border:1px dashed #D5D5D5;
+  border-radius: 5px;
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 30px;
+}
+
+p.quizz-not-created{
+  width: 250px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+
+  font-family: Roboto;
+  font-size: 20px;
+  line-height: 23px;
+  color: #B9B9B9;
+  word-break: keep-all;
+}
+
+.create-quizz-btn{
+  width: 151px;
+  height: 40px;
+  background-color: transparent;
+  border:  1px dashed #EC362D;
+  border-radius: 50px;
+
+  font-family: Roboto;
+  text-align: center;
+  color: #EC362D;
+}
+
+.create-quizz-btn:hover{
+  cursor: pointer;
+}
+
+.general-quizzes{
+  width: 1060px;
+  margin: 0 auto;
+  /* display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center; */
+}
+
+.all-quizzes-title{
+  font-family: Roboto;
+  font-weight: bold;
+  font-size: 20px;
+  line-height: 23px;
+  color: #000000;
+
+  margin-bottom: 10px;
+
+}
+
+.general-quizzes-list{
+  width: 100%;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: center;
+}
+
+.server-quizz{
+  width: 340px;
+  height: 181px;
+  position: relative;
+  border-radius: 5px;
+}
+
+.server-quizz img{
+  width: 100%;
+  height: 100%;
+  border-radius: 5px;
+}
+
+.gradient{
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(180deg, rgba(255, 255, 255, 0) 0%, rgba(0, 0, 0, 0.5) 64.58%, #000000 100%);
+  position: absolute;
+  top: 0px;
+  border-radius: 5px;
+}
+
+.server-quizz p{
+  margin: 0 19px;
+  position: absolute;
+  bottom: 15px;
+
+  font-family: Roboto;
+  font-size: 19px;
+  line-height: 22px;
+  color: #fff;
+  word-break: keep-all;
+}
+
+.server-quizz:hover{
+  cursor: pointer;
+}
+
+@media(max-width: 1100px){
+  .app{
+    width: 100%;
+    padding-bottom:20px ;
+  }
+  
+  .your-quizzes.not-created{
+    width: 90%;
+    height: 100%;
+  }
+
+  .your-quizzes.created{
+    width: 90%;
+    height: fit-content;
+    border-radius: 5px;
+  }
+
+  .your-quizzes-header{
+    width: 100%;
+  }
+
+  .your-quizzes-list{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    border-radius: 5px;
+  }
+
+  .your-quizz{
+    width: 100%;
+    border-radius: 5px;
+  }
+
+  .your-quizz img{
+    object-fit: cover;
+    border-radius: 5px;
+  }
+
+  .general-quizzes{
+    width: 90%;
+  }
+
+  .general-quizzes-list{
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .server-quizz{
+    width: 100%;
+  }  
+
+  .server-quizz img{
+    width: 100%;
+    height: 100%;
+    border-radius: 5px;
+
+    object-fit: cover;
+  }
+
+}
+
+
