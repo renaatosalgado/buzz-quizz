@@ -53,20 +53,6 @@ function loadQuizzes(answer){
           </div>
           <p class="quizz-title">${serverQuizz.title} </p>
         </div>
-
-        <div class="server-quizz">
-          <img src='${serverQuizz.image}'/>
-          <div class="gradient">
-          </div>
-          <p class="quizz-title">${serverQuizz.title} </p>
-        </div>
-
-        <div class="server-quizz">
-          <img src='${serverQuizz.image}'/>
-          <div class="gradient">
-          </div>
-          <p class="quizz-title">${serverQuizz.title} </p>
-        </div>
       `
       // Forçando quizzes criados pelo usuário. Feito para testes
       
