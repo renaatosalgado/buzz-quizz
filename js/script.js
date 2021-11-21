@@ -3,6 +3,7 @@ const QUIZZES_API ="https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
 const APP = document.querySelector(".app");
 
 
+
 //============== TELA 01 ==============//
 function listQuizzes(){
   APP.innerHTML = 
@@ -69,10 +70,36 @@ function loadQuizzes(answer){
   }
 }
 
-listQuizzes()
+//listQuizzes()
 
 //============== TELA 02 ==============//
+let quiz_point=0;
+function onSelectedAnswer(element){
+  element.classList.add(".selecionado")
+  let myElementParent = (element.parentNode).querySelector("#true");
+ 
+  (element.parentNode).classList.remove("normal-style")
+  console.log("clique")
 
+  element.classList.add("selected")
+
+  if(element==myElementParent){
+    
+    quiz_point++;
+    alert("acertou "+ quiz_point)
+  }
+  else{alert("errou "+ quiz_point)}
+  (element.parentNode).classList.add("transparent")
+  let next_element = ((element.parentNode).parentNode.nextSibling.nextElementSibling)
+  console.log(next_element)
+  if(next_element!=null) 
+  {
+    scrollToCard2(next_element,2000)
+  }
+
+  
+  console.log(next_element)
+}
 
 function frame_2(){
   let prommisse_quiz_selected=axios.get(QUIZZES_API);
@@ -81,7 +108,7 @@ function frame_2(){
 
   function load_quiz(response){
     let quiz_data=response.data;
-    let quiz_selecionado=quiz_data[1];// aqui vai o quiz selecionado
+    let quiz_selecionado=quiz_data[19];// aqui vai o quiz selecionado
     let questions = quiz_selecionado.questions; // aqui vai as questões 
     //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
     console.log(questions);
@@ -101,29 +128,29 @@ function frame_2(){
       `
       <div class="question-container">
         <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
-        <div class="quiz-answers">
-          <div class="answer">
-            <img src="${answers[0].image}" alt="">
+        <div class="quiz-answers normal-style">
+          <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[0].isCorrectAnswer}">
+            <img src="${answers[0].image}" alt="" >
             <p>${answers[0].text}</p>
           </div>
-          <div class="answer">
+          <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[1].isCorrectAnswer}">
             <img src="${answers[1].image}" alt="">
-            <p>${answers[1].text}</p> 
+            <p class="normal-style">${answers[1].text}</p> 
           </div>
-          <div class="answer">
+          <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[2].isCorrectAnswer}">
             <img src="${answers[2].image}" alt="">
-            <p>${answers[2].text}</p>
+            <p class="normal-style">${answers[2].text}</p>
           </div>
-          <div class="answer">
+          <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[3].isCorrectAnswer}">
             <img src="${answers[3].image}" alt="">
-            <p>${answers[3].text}</p>
+            <p class="normal-style">${answers[3].text}</p>
           </div>
         </div>
       </div>    
       `
     }}}
 
-//frame_2() // função de teste  para a tela 2
+frame_2() // função de teste  para a tela 2
 
 
 
@@ -511,6 +538,15 @@ function checkColor(color) {
   const rule = /^\#([0-9]|[A-F]|[a-f]){6}$/;
   return rule.test(color);
 }
+
+function scrollToCard2(element,time) {
+  function scroll() {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+
+  setTimeout(scroll, time);
+}
+
 
 function scrollToCard(element) {
   function scroll() {

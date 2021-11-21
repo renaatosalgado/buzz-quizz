@@ -210,7 +210,25 @@ body {
 
 /* FIM DA TELA 03*/
 
+
 /*Aqui para baixo estilo page 2*/
+
+
+
+#true{
+  color: #009C22;
+}
+#false{
+  color: #FF4B4B;
+}
+
+.normal-style p{
+  color: #000;
+  
+}
+
+
+
 .top-quiz-container {
   position: relative;
   width: 100%;
@@ -264,6 +282,14 @@ span.quiz-title {
   line-height: 27px;
   letter-spacing: 0em;
 }
+.answer{
+  height: 200px;
+  width: 329.9119873046875px;
+  margin-bottom: 10px;
+  text-align: left;
+  margin-top: 20px;
+  
+}
 .answer img {
   height: 175.20184326171875px;
   width: 329.9119873046875px;
@@ -278,16 +304,13 @@ span.quiz-title {
   text-align: left;
   padding-top: 5px;
 }
-.answer {
-  text-align: left;
-  margin-top: 20px;
-}
+
 
 .quiz-answers {
   display: flex;
   flex-wrap: wrap;
   justify-content: space-between;
-  align-items: center;
+  align-items: center; 
 }
 
 /*Reponsividade da tela2*/
@@ -296,6 +319,14 @@ span.quiz-title {
     width: 100%;
     height: 100%;
   }
+}
+
+.transparent .answer{
+    opacity: 0.2; 
+    pointer-events: none;
+}
+div .answer.selected{
+  opacity: 1;
 }
 /*Aqui para cima estilo page 2*/
 
