@@ -45,7 +45,7 @@ function loadQuizzes(answer) {
 
     if ("questions" in serverQuizz) {
       allQuizzes.innerHTML += `
-        <div class="server-quizz" onclick="selectQuizz(this)">
+        <div class="server-quizz" onclick="loadQuiz(this)">
           <img src='${serverQuizz.image}'/>
           <div class="gradient">
           </div>
@@ -67,61 +67,138 @@ function loadQuizzes(answer) {
   }
 }
 
-listQuizzes();
+//listQuizzes()
 
 //============== TELA 02 ==============//
 
+///variaveis globais da tela 2
+let quiz_point = 0; //variável de pontuação
+let prommisse_quiz_selected = axios.get(QUIZZES_API);
+let quiz_data; //dados da requisição, todos os quizzes
+let quiz_selecionado; //somnete o quiz selecioando no array acima
+let result;
+let counter = 0;
+let levels;
+
 function frame_2() {
-  let prommisse_quiz_selected = axios.get(QUIZZES_API);
-  prommisse_quiz_selected.then(load_quiz);
+  // função que carrega a pagina 2  
+  prommisse_quiz_selected.then(loadQuiz);
   prommisse_quiz_selected.catch(console.log("Eita"));
+}
 
-  function load_quiz(response) {
-    let quiz_data = response.data;
-    let quiz_selecionado = quiz_data[1]; // aqui vai o quiz selecionado
-    let questions = quiz_selecionado.questions; // aqui vai as questões
-    //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
-    console.log(questions);
+function onSelectedAnswer(element) {
+  //função da dinamica das repostas
+  counter++;
+  element.classList.add(".selecionado");
+  let myElementParent = element.parentNode.querySelector("#true");
 
-    APP.innerHTML = `   
-      <div class="top-quiz-container">
-      <img class ="icon-main-image"src="${quiz_selecionado.image}" alt="">
-      <span  class="quiz-title">${quiz_selecionado.title}</span>
-      </div>
-      <div class="quiz-container">         
-      </div>
-    `;
-    for (let i = 0; i < questions.length; i++) {
-      let answers = questions[i].answers.sort(randOrd);
+  element.parentNode.classList.remove("normal-style");
+  console.log("clique");
 
-      APP.querySelector(".quiz-container").innerHTML += `
-      <div class="question-container">
-        <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
-        <div class="quiz-answers">
-          <div class="answer">
-            <img src="${answers[0].image}" alt="">
-            <p>${answers[0].text}</p>
-          </div>
-          <div class="answer">
-            <img src="${answers[1].image}" alt="">
-            <p>${answers[1].text}</p> 
-          </div>
-          <div class="answer">
-            <img src="${answers[2].image}" alt="">
-            <p>${answers[2].text}</p>
-          </div>
-          <div class="answer">
-            <img src="${answers[3].image}" alt="">
-            <p>${answers[3].text}</p>
-          </div>
+  element.classList.add("selected");
+
+  if (element == myElementParent) {
+    quiz_point++;
+    alert("acertou " + quiz_point);
+  } else {
+    alert("errou " + quiz_point);
+  }
+  element.parentNode.classList.add("transparent");
+  let next_element =
+    element.parentNode.parentNode.nextSibling.nextElementSibling;
+  console.log(next_element);
+  if (next_element != null) {
+    scrollToCard2(next_element, 2000);
+  }
+
+  quizResult();
+}
+function loadQuiz(response) {
+  //função que carrega um quiz
+
+  quiz_data = response.data;
+  //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
+  //console.log(quiz_selecionado);
+  quiz_selecionado = quiz_data.filter((p) => p.id == "635")[0]; //aqui podemos selecionar por id
+  console.log(quiz_data);
+  let questions = quiz_selecionado.questions; // aqui vai as questões
+  levels = quiz_selecionado.levels;
+  //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
+  console.log(quiz_selecionado);
+
+  APP.innerHTML = `   
+    <div class="top-quiz-container">
+    <img class ="icon-main-image"src="${quiz_selecionado.image}" alt="">
+    <span  class="quiz-title">${quiz_selecionado.title}</span>
+    </div>
+    <div class="quiz-container">         
+    </div>
+  `;
+
+  for (let i = 0; i < questions.length; i++) {
+    let answers = questions[i].answers.sort(randOrd);
+
+    APP.querySelector(".quiz-container").innerHTML += `
+    <div class="question-container">
+      <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
+      <div class="quiz-answers normal-style">
+        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[0].isCorrectAnswer}">
+          <img src="${answers[0].image}" alt="" >
+          <p>${answers[0].text}</p>
         </div>
-      </div>    
-      `;
-    }
+        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[1].isCorrectAnswer}">
+          <img src="${answers[1].image}" alt="">
+          <p class="normal-style">${answers[1].text}</p> 
+        </div>
+        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[2].isCorrectAnswer}">
+          <img src="${answers[2].image}" alt="">
+          <p class="normal-style">${answers[2].text}</p>
+        </div>
+        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[3].isCorrectAnswer}">
+          <img src="${answers[3].image}" alt="">
+          <p class="normal-style">${answers[3].text}</p>
+        </div>
+      </div>
+    </div>    
+    `;
   }
 }
 
-//frame_2() // função de teste  para a tela 2
+function quizResult() {
+  let total_points = quiz_selecionado.questions.length;
+  result = Math.ceil((quiz_point / total_points) * 100);
+
+  let levels = quiz_selecionado.levels;
+  const min_value = levels.map((p) => p.minValue);
+  let my_level = min_value.filter((value) => {
+    return value <= result;
+  });
+  console.log(my_level);
+  let level_selected = levels[my_level.length - 1];
+
+  if (quiz_selecionado.questions.length == counter) {
+    //quando finalizar
+
+    console.log("result");
+    APP.querySelector(".quiz-container").innerHTML += `   
+    <div class="question-container" id="result-box">
+      <div class="result-title-container">
+      <p>${result} % de acerto: ${level_selected.title} </p>
+      </div>
+      <div class="box-result">
+      <img class ="image-result"src="${level_selected.image}" alt="">
+      <p class="text-result">${level_selected.text}</p>
+      </div>    
+    </div>
+    <button class="reload-button">Reiniciar Quiz</button>
+    <p class="go-back-button" onclick="getQuizzes()">Voltar pra home</p>
+    `;
+  }
+}
+
+scrollToCard2(document.querySelector("#result-box"), 2000);
+
+frame_2(); // função de teste  para a tela 2
 
 //============== TELA 03 ==============//
 
@@ -507,6 +584,14 @@ function checkURL(url) {
 function checkColor(color) {
   const rule = /^\#([0-9]|[A-F]|[a-f]){6}$/;
   return rule.test(color);
+}
+
+function scrollToCard2(element, time) {
+  function scroll() {
+    element.scrollIntoView({ behavior: "smooth" });
+  }
+
+  setTimeout(scroll, time);
 }
 
 function scrollToCard(element) {
