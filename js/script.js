@@ -119,7 +119,10 @@ function onSelectedAnswer(element){ //função da dinamica das repostas
   quizResult()
 }
 function loadQuiz(response){//função que carrega um quiz  
-
+  result =0;
+  counter=0;
+  levels=0;
+  quiz_point=0;
   
   quiz_data=response.querySelector('span').innerHTML;
   //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
@@ -147,32 +150,24 @@ function loadQuiz(response){//função que carrega um quiz
     <div class="question-container">
       <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
       <div class="quiz-answers normal-style">
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[0].isCorrectAnswer}">
-          <img src="${answers[0].image}" alt="" >
-          <p>${answers[0].text}</p>
-        </div>
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[1].isCorrectAnswer}">
-          <img src="${answers[1].image}" alt="">
-          <p class="normal-style">${answers[1].text}</p> 
-        </div>
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[2].isCorrectAnswer}">
-          <img src="${answers[2].image}" alt="">
-          <p class="normal-style">${answers[2].text}</p>
-        </div>
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[3].isCorrectAnswer}">
-          <img src="${answers[3].image}" alt="">
-          <p class="normal-style">${answers[3].text}</p>
-        </div>
       </div>
     </div>    
     `
-  
+
+    for(let p=0;p<answers.length;p++){
+      APP.querySelector(".quiz-container").lastElementChild.querySelector(".quiz-answers").innerHTML+=
+       `        
+      <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[p].isCorrectAnswer}">
+        <img src="${answers[p].image}" alt="">
+        <p class="normal-style">${answers[p].text}</p>
+      </div>
+      `
+    }
 }}
 
 function quizResult(){
   let total_points= quiz_selecionado.questions.length;
   result = Math.ceil((quiz_point/total_points)*100)
-  
   let levels = quiz_selecionado.levels;
   const min_value = levels.map(p => p.minValue);
   let my_level = min_value.filter((value)=>{return value<=result})
