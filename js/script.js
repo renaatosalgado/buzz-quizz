@@ -48,7 +48,7 @@ function loadQuizzes(answer){
     if('questions' in serverQuizz){
       allQuizzes.innerHTML += 
       `
-        <div class="server-quizz" onclick="selectQuizz(this)">
+        <div class="server-quizz" onclick="frame_2(serverQuizz)">
           <img src='${serverQuizz.image}'/>
           <div class="gradient">
           </div>

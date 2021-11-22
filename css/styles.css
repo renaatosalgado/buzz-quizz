@@ -30,6 +30,10 @@ body {
   z-index: 2;
 }
 
+.top-bar:hover{
+  cursor: pointer;
+}
+
 .app {
   height: calc(100vh - 69px);
   /* margin: 69px 0 31px; */
