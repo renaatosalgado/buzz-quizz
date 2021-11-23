@@ -14,6 +14,13 @@ function listQuizzes() {
     <div class="general-quizzes-list"></div>
     </div>
   `;
+
+  let USER_QUIZZES_IDS = [];
+
+  const quizzesFromLocalStorage = getQuizzesLocalStorage();
+
+  USER_QUIZZES_IDS = quizzesFromLocalStorage.map((quizz) => quizz.id);
+
   // CÓDIGO A SER ADICIONADO QUANDO HOUVER QUIZZES CRIADOS
   // let yourQuizzes =
   // `
@@ -81,7 +88,7 @@ let counter = 0;
 let levels;
 
 function frame_2() {
-  // função que carrega a pagina 2  
+  // função que carrega a pagina 2
   prommisse_quiz_selected.then(loadQuiz);
   prommisse_quiz_selected.catch(console.log("Eita"));
 }
@@ -218,10 +225,14 @@ function generateQuizz() {
     <div class="page-create-quizz">
       <div class="title">Comece pelo começo</div>
       <div class="entries">
-          <input type="text" class="title" placeholder="Título do seu quizz">
-          <input type="text" class="url" placeholder="URL da imagem do seu quizz">
-          <input type="number" class="quantity-questions" placeholder="Quantidade de perguntas do quizz">
-          <input type="number" class="quantity-levels" placeholder="Quantidade de níveis do quizz">
+          <input type="text" class="title basic-info" placeholder="Título do seu quizz">
+          <div class="wrong-input-message wrong-title hidden">O título deve possuir de 20 a 65 caracteres</div>
+          <input type="text" class="url basic-info" placeholder="URL da imagem do seu quizz">
+          <div class="wrong-input-message wrong-url hidden">O valor informado não é uma URL válida</div>
+          <input type="number" class="quantity-questions basic-info" placeholder="Quantidade de perguntas do quizz">
+          <div class="wrong-input-message wrong-questionNumber hidden">O quizz deve ter no mínimo 3 perguntas</div>
+          <input type="number" class="quantity-levels basic-info" placeholder="Quantidade de níveis do quizz">
+          <div class="wrong-input-message wrong-levelNumber hidden">O quizz deve ter no mínimo 2 níveis de classificação</div>
       </div>
       <button class="proceed" onclick="generateQuestions()">Prosseguir pra criar perguntas</button>
     </div>
@@ -245,22 +256,71 @@ function saveQuizzBasicInfo() {
 function checkQuizzBasicInfo() {
   saveQuizzBasicInfo();
 
+  let errorCounter = 0;
+
   if (CREATED_QUIZZ.title.length < 20 || CREATED_QUIZZ.title.length > 65) {
-    return false;
-  } else if (!checkURL(CREATED_QUIZZ.image)) {
-    return false;
-  } else if (CREATED_QUIZZ.qttQuestions < 3) {
-    return false;
-  } else if (CREATED_QUIZZ.qttLevels < 2) {
-    return false;
+    errorCounter++;
+
+    const wrongTitle = document.querySelector(".wrong-title");
+    const wrongBackground = document.querySelector(".basic-info.title");
+
+    if (wrongTitle.classList.contains("hidden"))
+      wrongTitle.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-title").classList.add("hidden");
+    document.querySelector(".basic-info.title").classList.remove("wrong-input-background");
   }
-  return true;
+
+  if (!checkURL(CREATED_QUIZZ.image)) {
+    errorCounter++;
+
+    const wrongUrl = document.querySelector(".wrong-url");
+    const wrongBackground = document.querySelector(".basic-info.url");
+
+    if (wrongUrl.classList.contains("hidden"))
+    wrongUrl.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-url").classList.add("hidden");
+    document.querySelector(".basic-info.url").classList.remove("wrong-input-background");
+  }
+
+  if (CREATED_QUIZZ.qttQuestions < 3) {
+    errorCounter++;
+
+    const wrongQuestionQtt = document.querySelector(".wrong-questionNumber");
+    const wrongBackground = document.querySelector(".basic-info.quantity-questions");
+
+    if (wrongQuestionQtt.classList.contains("hidden"))
+    wrongQuestionQtt.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-questionNumber").classList.add("hidden");
+    document.querySelector(".basic-info.quantity-questions").classList.remove("wrong-input-background");
+  }
+
+  if (CREATED_QUIZZ.qttLevels < 2) {
+    errorCounter++;
+
+    const wrongLevelQtt = document.querySelector(".wrong-levelNumber");
+    const wrongBackground = document.querySelector(".basic-info.quantity-levels");
+
+    if (wrongLevelQtt.classList.contains("hidden"))
+    wrongLevelQtt.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-levelNumber").classList.add("hidden");
+    document.querySelector(".basic-info.quantity-levels").classList.remove("wrong-input-background");
+  }
+
+  console.log(errorCounter)
+  return errorCounter++;
 }
 
 function generateQuestions() {
   const valid = checkQuizzBasicInfo();
-  if (!valid) {
-    alert("Preencha os campos corretamente!");
+  if (valid !== 0) {
     return;
   }
 
@@ -317,22 +377,22 @@ function generateQuestionCard(index) {
         <div class="label">Respostas incorretas</div>
 
         <div class="group question-${index}-wrong-0">
-          <input type"text" class="answer" placeholder="Resposta incorreta 1" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 1" />
           <input type="text" class="url" placeholder="URL da imagem 1" />
         </div>
 
         <div class="group question-${index}-wrong-1">
-          <input type"text" class="answer" placeholder="Resposta incorreta 2" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 2" />
           <input type="text" class="url" placeholder="URL da imagem 2" />
         </div>
 
         <div class="group question-${index}-wrong-2">
-          <input type"text" class="answer" placeholder="Resposta incorreta 3" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 3" />
           <input type="text" class="url" placeholder="URL da imagem 3" />
         </div>
 
         <div class="group question-${index}-wrong-3">
-          <input type"text" class="answer" placeholder="Resposta incorreta 4" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 4" />
           <input type="text" class="url" placeholder="URL da imagem 4" />
         </div>
       </div>
@@ -361,7 +421,8 @@ function saveQuizzQuestions() {
 
     for (let j = 0; j < 3; j++) {
       const answer = {
-        text: document.querySelector(`.question-${i}-wrong-${j} .answer`).value,
+        text: document.querySelector(`.question-${i}-wrong-${j} .answer-form`)
+          .value,
         image: document.querySelector(`.question-${i}-wrong-${j} .url`).value,
         isCorrectAnswer: false,
       };
@@ -384,15 +445,12 @@ function checkQuizzQuestions() {
     const question = CREATED_QUIZZ.questions[i];
 
     if (question.title.length < 20) {
-      console.log("titulo errado");
       return false;
     } else if (!checkColor(question.color)) {
-      console.log("cor errada pergunta");
       return false;
     }
 
     if (question.answers.length < 2) {
-      console.log("qtd respostas errada");
       return false;
     }
 
@@ -400,10 +458,8 @@ function checkQuizzQuestions() {
       const answer = question.answers[j];
 
       if (answer.text.length === 0) {
-        console.log("resposta nula");
         return false;
       } else if (!checkURL(answer.image)) {
-        console.log("url errada resposta");
         return false;
       }
     }

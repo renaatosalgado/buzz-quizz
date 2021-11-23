@@ -87,6 +87,11 @@ body {
   padding: 12px;
   border: 1px solid #d1d1d1;
   border-radius: 5px;
+  font-size: 19px;
+}
+
+.wrong-input-background {
+  background-color: #FFE9E9;
 }
 
 .entries input:not(:last-child) {
@@ -212,6 +217,17 @@ body {
   word-break: break-all;
 }
 
+.hidden {
+  display: none;
+}
+
+.wrong-input-message {
+  font-size: 16px;
+  color: #EC362D;
+  font-weight: 400;
+  margin-bottom: 6px;
+}
+
 /* FIM DA TELA 03*/
 
 /*Aqui para baixo estilo page 2*/
@@ -313,26 +329,12 @@ span.quiz-title {
   line-height: 27px;
   letter-spacing: 0em;
 }
-.answer {
+.answer-form input {
   height: 200px;
-  width: 329.9119873046875px;
+  width: 329px;
   margin-bottom: 10px;
   text-align: left;
   margin-top: 20px;
-}
-.answer img {
-  height: 175.20184326171875px;
-  width: 100%;
-  object-fit: cover;
-}
-.answer p {
-  font-size: 20px;
-  font-style: normal;
-  font-weight: 700;
-  line-height: 23px;
-  letter-spacing: 0em;
-  text-align: left;
-  padding-top: 5px;
 }
 
 .reload-button {
