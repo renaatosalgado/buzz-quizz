@@ -3,7 +3,7 @@ const QUIZZES_API ="https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
 const APP = document.querySelector(".app");
 let serverQuizz= undefined
 let quizzes
-
+let database1;
 
 listQuizzes()
 //============== TELA 01 ==============//
@@ -89,10 +89,7 @@ let result;
 let counter=0;
 let levels;
 
-function frame_2(){ // função que carrega a pagina 2
-  prommisse_quiz_selected.then(loadQuiz)
-  prommisse_quiz_selected.catch(console.log("Eita"))
-}
+
 function onSelectedAnswer(element){ //função da dinamica das repostas
   counter++;
   element.classList.add(".selecionado")
@@ -105,9 +102,11 @@ function onSelectedAnswer(element){ //função da dinamica das repostas
 
   if(element==myElementParent){
     quiz_point++;
-    alert("acertou "+ quiz_point)
+    
   }
-  else{alert("errou "+ quiz_point)}
+  else{
+
+  }
   (element.parentNode).classList.add("transparent")
   let next_element = ((element.parentNode).parentNode.nextSibling.nextElementSibling)
   console.log(next_element)
@@ -123,16 +122,19 @@ function loadQuiz(response){//função que carrega um quiz
   counter=0;
   levels=0;
   quiz_point=0;
+  database1 = response;
+  
   
   quiz_data=response.querySelector('span').innerHTML;
   //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
   //console.log(quiz_selecionado);
   quiz_selecionado= quizzes.filter(p => p.id==quiz_data)[0]//aqui podemos selecionar por id
-  console.log(quiz_data);
+  console.log(quiz_selecionado);
   let questions = quiz_selecionado.questions; // aqui vai as questões 
   levels = quiz_selecionado.levels;
   //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
   console.log(quiz_selecionado);
+
   
   APP.innerHTML=`   
     <div class="top-quiz-container">
@@ -142,6 +144,7 @@ function loadQuiz(response){//função que carrega um quiz
     <div class="quiz-container">         
     </div>
   `;
+  document.querySelector(".quiz-container").scrollIntoView();
   for(let i=0;i<questions.length;i++){
     let answers = (questions[i].answers).sort(randOrd)
 
@@ -163,8 +166,11 @@ function loadQuiz(response){//função que carrega um quiz
       </div>
       `
     }
+   
 }}
-
+function reload(){
+  loadQuiz(database1);
+}
 function quizResult(){
   let total_points= quiz_selecionado.questions.length;
   result = Math.ceil((quiz_point/total_points)*100)
@@ -187,7 +193,7 @@ function quizResult(){
       <p class="text-result">${level_selected.text}</p>
       </div>    
     </div>
-    <button class="reload-button">Reiniciar Quiz</button>
+    <button class="reload-button" onclick="reload();"6>Reiniciar Quiz</button>
     <p class="go-back-button" onclick="listQuizzes()">Voltar pra home</p>
 
   `;
@@ -196,13 +202,6 @@ function quizResult(){
 
 
 }
-
-
-
-// frame_2() // função de teste  para a tela 2
-
-
-
 
 //============== TELA 03 ==============//
 
