@@ -52,6 +52,10 @@ function listQuizzes(response) {
     for (let i = 0; i < yourQuizzes.length; i++) {
       let yourQuizz = yourQuizzes[i];
 
+      if(yourQuizz.title === undefined) {
+        yourQuizzesList.innerHTML += "";
+      } else {
+
       yourQuizzesList.innerHTML += `
         <div class="your-quizz" onclick="loadQuiz(this)">
             <img src='${yourQuizz.image}'/>
@@ -60,6 +64,7 @@ function listQuizzes(response) {
             <span class="hidden">${yourQuizz.id}</span>
         </div>      
       `;
+      }
     }
   }
 
