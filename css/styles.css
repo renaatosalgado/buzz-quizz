@@ -372,8 +372,13 @@ span.quiz-title {
   margin: 0 auto;
   margin-top: 20px;
 }
+
+.reload-button:hover {
+  filter: brightness(108%);
+}
+
 .go-back-button {
-  cursor: pointer;
+  width: 220px;
   border: none;
   color: #818181;
   font-size: 18px;
@@ -387,6 +392,11 @@ span.quiz-title {
   align-items: center;
   margin: 0 auto;
   margin-top: 20px;
+  margin-bottom: 30px;
+}
+
+.go-back-button:hover {
+  cursor: pointer;
 }
 
 .quiz-answers {

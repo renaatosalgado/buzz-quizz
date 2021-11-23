@@ -9,7 +9,7 @@ listQuizzes();
 //============== TELA 01 ==============//
 function listQuizzes() {
   const yourQuizzes = getQuizzesLocalStorage();
-  console.log(yourQuizzes);
+
   APP.innerHTML = `
       <div class="your-quizzes not-created">
         <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
@@ -33,6 +33,7 @@ function listQuizzes() {
       <div class="your-quizzes-list"></div>
     </div>  
     `;
+
     yourQuizzesElement.classList.replace("not-created", "created");
     const yourQuizzesList = document.querySelector(".your-quizzes-list");
     for (let i = 0; i < yourQuizzes.length; i++) {
@@ -56,9 +57,11 @@ function listQuizzes() {
 }
 
 function loadQuizzes(answer) {
-  console.log(answer);
+
   quizzes = answer.data;
+
   const allQuizzes = document.querySelector(".general-quizzes-list");
+  
   for (let i = 0; i < quizzes.length; i++) {
     serverQuizz = quizzes[i];
 
@@ -94,7 +97,6 @@ function onSelectedAnswer(element) {
   let myElementParent = element.parentNode.querySelector("#true");
 
   element.parentNode.classList.remove("normal-style");
-  console.log("clique");
 
   element.classList.add("selected");
 
@@ -105,7 +107,6 @@ function onSelectedAnswer(element) {
   element.parentNode.classList.add("transparent");
   let next_element =
     element.parentNode.parentNode.nextSibling.nextElementSibling;
-  console.log(next_element);
   if (next_element != null) {
     scrollToCard2(next_element, 2000);
   }
@@ -122,13 +123,12 @@ function loadQuiz(response) {
 
   quiz_data = response.querySelector("span").innerHTML;
   //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
-  //console.log(quiz_selecionado);
   quiz_selecionado = quizzes.filter((p) => p.id == quiz_data)[0]; //aqui podemos selecionar por id
-  console.log(quiz_selecionado);
+
   let questions = quiz_selecionado.questions; // aqui vai as questões
+
   levels = quiz_selecionado.levels;
   //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
-  console.log(quiz_selecionado);
 
   APP.innerHTML = `   
     <div class="top-quiz-container">
@@ -168,18 +168,19 @@ function reload() {
 function quizResult() {
   let total_points = quiz_selecionado.questions.length;
   result = Math.ceil((quiz_point / total_points) * 100);
+
   let levels = quiz_selecionado.levels;
+
   const min_value = levels.map((p) => p.minValue);
+
   let my_level = min_value.filter((value) => {
     return value <= result;
   });
-  console.log(my_level);
+
   let level_selected = levels[my_level.length - 1];
 
   if (quiz_selecionado.questions.length == counter) {
-    //quando finalizar
 
-    console.log("result");
     APP.querySelector(".quiz-container").innerHTML += `   
     <div class="question-container" id="result-box">
       <div class="result-title-container">
@@ -190,7 +191,7 @@ function quizResult() {
       <p class="text-result">${level_selected.text}</p>
       </div>    
     </div>
-    <button class="reload-button" onclick="reload();"6>Reiniciar Quiz</button>
+    <button class="reload-button" onclick="reload()"6>Reiniciar Quizz</button>
     <p class="go-back-button" onclick="listQuizzes()">Voltar pra home</p>
 
   `;
@@ -218,12 +219,16 @@ function generateQuizz() {
       <div class="entries">
         <input type="text" class="title basic-info" placeholder="Título do seu quizz">
         <div class="wrong-input-message wrong-title hidden">O título deve possuir de 20 a 65 caracteres</div>
+
         <input type="text" class="url basic-info" placeholder="URL da imagem do seu quizz">
         <div class="wrong-input-message wrong-url hidden">O valor informado não é uma URL válida</div>
+
         <input type="number" class="quantity-questions basic-info" placeholder="Quantidade de perguntas do quizz">
         <div class="wrong-input-message wrong-questionNumber hidden">O quizz deve ter no mínimo 3 perguntas</div>
+
         <input type="number" class="quantity-levels basic-info" placeholder="Quantidade de níveis do quizz">
         <div class="wrong-input-message wrong-levelNumber hidden">O quizz deve ter no mínimo 2 níveis de classificação</div>
+
       </div>
       <button class="proceed" onclick="generateQuestions()">Prosseguir pra criar perguntas</button>
     </div>
@@ -317,7 +322,6 @@ function checkQuizzBasicInfo() {
       .classList.remove("wrong-input-background");
   }
 
-  console.log(errorCounter);
   return errorCounter++;
 }
 
@@ -548,8 +552,8 @@ function createQuizzSuccess(id) {
         <div class="title">${CREATED_QUIZZ.title}</div>
       </div>
 
-      <button class="access-quizz" onclick="showQuizz(${id})">Acessar Quizz</button>
-      <button class="go-back" onclick="getQuizzes()">Voltar pra home</button>
+      <button class="access-quizz" onclick="loadQuiz()">Acessar Quizz</button>
+      <button class="go-back" onclick="listQuizzes()">Voltar pra home</button>
     </div>  
   `;
 }
