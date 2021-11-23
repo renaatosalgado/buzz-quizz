@@ -600,6 +600,10 @@ p.quizz-not-created {
   cursor: pointer;
 }
 
+.hidden{
+  display: none;
+}
+
 @media (max-width: 1100px) {
   .app {
     width: 100%;

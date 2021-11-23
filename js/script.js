@@ -1,9 +1,10 @@
 const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
 const QUIZZES_API ="https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
 const APP = document.querySelector(".app");
+let serverQuizz= undefined
 
 
-
+listQuizzes()
 //============== TELA 01 ==============//
 function listQuizzes(){
   APP.innerHTML = 
@@ -43,16 +44,17 @@ function loadQuizzes(answer){
   const allQuizzes = document.querySelector('.general-quizzes-list')
   const yourQuizzes = document.querySelector('.your-quizzes-list')
   for(let i=0; i<quizzes.length; i++){
-    let serverQuizz = quizzes[i]
+    serverQuizz = quizzes[i]
 
     if('questions' in serverQuizz){
       allQuizzes.innerHTML += 
       `
-        <div class="server-quizz" onclick="frame_2(serverQuizz)">
+        <div class="server-quizz" onclick="loadQuiz(this)">
           <img src='${serverQuizz.image}'/>
           <div class="gradient">
           </div>
-          <p class="quizz-title">${serverQuizz.title} </p>
+          <p class="quizz-title">${serverQuizz.title}</p>
+          <span class="hidden">${serverQuizz.id}
         </div>
       `
       // Forçando quizzes criados pelo usuário. Feito para testes
@@ -116,6 +118,10 @@ function onSelectedAnswer(element){ //função da dinamica das repostas
   quizResult()
 }
 function loadQuiz(response){//função que carrega um quiz
+  console.dir(response)
+
+  
+
   
   quiz_data=response.data;
   //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
@@ -200,7 +206,7 @@ function quizResult(){
 
 
 
-frame_2() // função de teste  para a tela 2
+// frame_2() // função de teste  para a tela 2
 
 
 
