@@ -380,22 +380,22 @@ function generateQuestionCard(index) {
         <div class="label">Respostas incorretas</div>
 
         <div class="group question-${index}-wrong-0">
-          <input type"text" class="answer" placeholder="Resposta incorreta 1" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 1" />
           <input type="text" class="url" placeholder="URL da imagem 1" />
         </div>
 
         <div class="group question-${index}-wrong-1">
-          <input type"text" class="answer" placeholder="Resposta incorreta 2" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 2" />
           <input type="text" class="url" placeholder="URL da imagem 2" />
         </div>
 
         <div class="group question-${index}-wrong-2">
-          <input type"text" class="answer" placeholder="Resposta incorreta 3" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 3" />
           <input type="text" class="url" placeholder="URL da imagem 3" />
         </div>
 
         <div class="group question-${index}-wrong-3">
-          <input type"text" class="answer" placeholder="Resposta incorreta 4" />
+          <input type"text" class="answer-form" placeholder="Resposta incorreta 4" />
           <input type="text" class="url" placeholder="URL da imagem 4" />
         </div>
       </div>
@@ -424,7 +424,8 @@ function saveQuizzQuestions() {
 
     for (let j = 0; j < 3; j++) {
       const answer = {
-        text: document.querySelector(`.question-${i}-wrong-${j} .answer`).value,
+        text: document.querySelector(`.question-${i}-wrong-${j} .answer-form`)
+          .value,
         image: document.querySelector(`.question-${i}-wrong-${j} .url`).value,
         isCorrectAnswer: false,
       };
@@ -447,15 +448,12 @@ function checkQuizzQuestions() {
     const question = CREATED_QUIZZ.questions[i];
 
     if (question.title.length < 20) {
-      console.log("titulo errado");
       return false;
     } else if (!checkColor(question.color)) {
-      console.log("cor errada pergunta");
       return false;
     }
 
     if (question.answers.length < 2) {
-      console.log("qtd respostas errada");
       return false;
     }
 
@@ -463,10 +461,8 @@ function checkQuizzQuestions() {
       const answer = question.answers[j];
 
       if (answer.text.length === 0) {
-        console.log("resposta nula");
         return false;
       } else if (!checkURL(answer.image)) {
-        console.log("url errada resposta");
         return false;
       }
     }

@@ -90,6 +90,10 @@ body {
   font-size: 19px;
 }
 
+.wrong-input-background {
+  background-color: #FFE9E9;
+}
+
 .entries input:not(:last-child) {
   margin-bottom: 9px;
 }
@@ -330,11 +334,12 @@ span.quiz-title {
 }
 .answer {
   height: 200px;
-  width: 329.9119873046875px;
+  width: 329px;
   margin-bottom: 10px;
   text-align: left;
   margin-top: 20px;
 }
+
 .answer img {
   height: 175.20184326171875px;
   width: 100%;
