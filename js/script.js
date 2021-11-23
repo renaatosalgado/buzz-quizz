@@ -34,7 +34,7 @@ function listQuizzes(response) {
       </div>
     `;
 
-  if (yourQuizzes.length !== 0) {
+  if (filteresQuizzesIds.user.length !== 0) {
     const yourQuizzesElement = document.querySelector(".your-quizzes");
 
     yourQuizzesElement.innerHTML = `
@@ -48,9 +48,11 @@ function listQuizzes(response) {
     `;
 
     yourQuizzesElement.classList.replace("not-created", "created");
+
     const yourQuizzesList = document.querySelector(".your-quizzes-list");
-    for (let i = 0; i < yourQuizzes.length; i++) {
-      let yourQuizz = yourQuizzes[i];
+
+    for (let i = 0; i < filteresQuizzesIds.user.length; i++) {
+      let yourQuizz = filteresQuizzesIds.user[i];
 
       if(yourQuizz.title === undefined) {
         yourQuizzesList.innerHTML += "";
