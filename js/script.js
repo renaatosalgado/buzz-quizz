@@ -1,40 +1,53 @@
 const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
 const QUIZZES_API = "https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes";
 const APP = document.querySelector(".app");
+let serverQuizz = undefined;
+let quizzes;
+let database1;
 
+listQuizzes();
 //============== TELA 01 ==============//
 function listQuizzes() {
+  const yourQuizzes = getQuizzesLocalStorage();
+  console.log(yourQuizzes);
   APP.innerHTML = `
-    <div class="your-quizzes not-created">
-      <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
-      <button class="create-quizz-btn" data-identifier="create-quizz" onclick="generateQuizz()">Criar Quizz</button>
-    </div>
-    <div class="general-quizzes" data-identifier="general-quizzes">
-    <p class="all-quizzes-title">Todos os Quizzes</>
-    <div class="general-quizzes-list"></div>
-    </div>
-  `;
+      <div class="your-quizzes not-created">
+        <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
+        <button class="create-quizz-btn" data-identifier="create-quizz" onclick="generateQuizz()">Criar Quizz</button>
+      </div>
+      <div class="general-quizzes" data-identifier="general-quizzes">
+        <p class="all-quizzes-title">Todos os Quizzes</>
+        <div class="general-quizzes-list"></div>
+      </div>
+    `;
 
-  let USER_QUIZZES_IDS = [];
+  if (yourQuizzes.length !== 0) {
+    const yourQuizzesElement = document.querySelector(".your-quizzes");
 
-  const quizzesFromLocalStorage = getQuizzesLocalStorage();
+    yourQuizzesElement.innerHTML = `
+    <div class="your-quizzes">
+      <div class="your-quizzes-header">
+        <p class="">Seus Quizzes</p>
+        <ion-icon name="add-circle" class="" onclick="generateQuizz()"></ion-icon>
+      </div>
+      <div class="your-quizzes-list"></div>
+    </div>  
+    `;
+    yourQuizzesElement.classList.replace("not-created", "created");
+    const yourQuizzesList = document.querySelector(".your-quizzes-list");
+    for (let i = 0; i < yourQuizzes.length; i++) {
+      let yourQuizz = yourQuizzes[i];
 
-  USER_QUIZZES_IDS = quizzesFromLocalStorage.map((quizz) => quizz.id);
-
-  // CÓDIGO A SER ADICIONADO QUANDO HOUVER QUIZZES CRIADOS
-  // let yourQuizzes =
-  // `
-  //   <div class="your-quizzes">
-  //     <div class="your-quizzes-header">
-  //       <p class="">Seus Quizzes</p>
-  //       <ion-icon name="add-circle" class=""></ion-icon>
-  //     </div>
-  //     <div class="your-quizzes-list"></div>
-  //   </div>
-  // `
-  // const createQuizzMenu = document.querySelector('.your-quizzes')
-  // createQuizzMenu.innerHTML = yourQuizzes
-  // createQuizzMenu.classList.replace('not-created','created')
+      yourQuizzesList.innerHTML = `
+        <div class="your-quizz" onclick="loadQuiz(this)">
+            <img src='${yourQuizz.image}'/>
+            <div class="gradient"></div>
+            <p class="quizz-title">${yourQuizz.title} </p>
+            <span class="hidden">${yourQuizz.id}</span>
+        </div>      
+      `;
+    }
+  }
 
   const promise = axios.get(
     "https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
@@ -44,11 +57,10 @@ function listQuizzes() {
 
 function loadQuizzes(answer) {
   console.log(answer);
-  let quizzes = answer.data;
+  quizzes = answer.data;
   const allQuizzes = document.querySelector(".general-quizzes-list");
-  const yourQuizzes = document.querySelector(".your-quizzes-list");
   for (let i = 0; i < quizzes.length; i++) {
-    let serverQuizz = quizzes[i];
+    serverQuizz = quizzes[i];
 
     if ("questions" in serverQuizz) {
       allQuizzes.innerHTML += `
@@ -56,25 +68,13 @@ function loadQuizzes(answer) {
           <img src='${serverQuizz.image}'/>
           <div class="gradient">
           </div>
-          <p class="quizz-title">${serverQuizz.title} </p>
+          <p class="quizz-title">${serverQuizz.title}</p>
+          <span class="hidden">${serverQuizz.id}</span>
         </div>
       `;
-      // Forçando quizzes criados pelo usuário. Feito para testes
-
-      // yourQuizzes.innerHTML +=
-      // `
-      // <div class="your-quizz" onclick="screen2(this)">
-      //     <img src='${serverQuizz.image}'/>
-      //     <div class="gradient">
-      //     </div>
-      //     <p class="quizz-title">${serverQuizz.title} </p>
-      //   </div>
-      // `
     }
   }
 }
-
-//listQuizzes()
 
 //============== TELA 02 ==============//
 
@@ -86,12 +86,6 @@ let quiz_selecionado; //somnete o quiz selecioando no array acima
 let result;
 let counter = 0;
 let levels;
-
-function frame_2() {
-  // função que carrega a pagina 2
-  prommisse_quiz_selected.then(loadQuiz);
-  prommisse_quiz_selected.catch(console.log("Eita"));
-}
 
 function onSelectedAnswer(element) {
   //função da dinamica das repostas
@@ -106,9 +100,7 @@ function onSelectedAnswer(element) {
 
   if (element == myElementParent) {
     quiz_point++;
-    alert("acertou " + quiz_point);
   } else {
-    alert("errou " + quiz_point);
   }
   element.parentNode.classList.add("transparent");
   let next_element =
@@ -122,12 +114,17 @@ function onSelectedAnswer(element) {
 }
 function loadQuiz(response) {
   //função que carrega um quiz
+  result = 0;
+  counter = 0;
+  levels = 0;
+  quiz_point = 0;
+  database1 = response;
 
-  quiz_data = response.data;
+  quiz_data = response.querySelector("span").innerHTML;
   //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
   //console.log(quiz_selecionado);
-  quiz_selecionado = quiz_data.filter((p) => p.id == "635")[0]; //aqui podemos selecionar por id
-  console.log(quiz_data);
+  quiz_selecionado = quizzes.filter((p) => p.id == quiz_data)[0]; //aqui podemos selecionar por id
+  console.log(quiz_selecionado);
   let questions = quiz_selecionado.questions; // aqui vai as questões
   levels = quiz_selecionado.levels;
   //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
@@ -141,7 +138,7 @@ function loadQuiz(response) {
     <div class="quiz-container">         
     </div>
   `;
-
+  document.querySelector(".quiz-container").scrollIntoView();
   for (let i = 0; i < questions.length; i++) {
     let answers = questions[i].answers.sort(randOrd);
 
@@ -149,32 +146,28 @@ function loadQuiz(response) {
     <div class="question-container">
       <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
       <div class="quiz-answers normal-style">
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[0].isCorrectAnswer}">
-          <img src="${answers[0].image}" alt="" >
-          <p>${answers[0].text}</p>
-        </div>
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[1].isCorrectAnswer}">
-          <img src="${answers[1].image}" alt="">
-          <p class="normal-style">${answers[1].text}</p> 
-        </div>
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[2].isCorrectAnswer}">
-          <img src="${answers[2].image}" alt="">
-          <p class="normal-style">${answers[2].text}</p>
-        </div>
-        <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[3].isCorrectAnswer}">
-          <img src="${answers[3].image}" alt="">
-          <p class="normal-style">${answers[3].text}</p>
-        </div>
       </div>
     </div>    
     `;
+
+    for (let p = 0; p < answers.length; p++) {
+      APP.querySelector(".quiz-container").lastElementChild.querySelector(
+        ".quiz-answers"
+      ).innerHTML += `        
+      <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[p].isCorrectAnswer}">
+        <img src="${answers[p].image}" alt="">
+        <p class="normal-style">${answers[p].text}</p>
+      </div>
+      `;
+    }
   }
 }
-
+function reload() {
+  loadQuiz(database1);
+}
 function quizResult() {
   let total_points = quiz_selecionado.questions.length;
   result = Math.ceil((quiz_point / total_points) * 100);
-
   let levels = quiz_selecionado.levels;
   const min_value = levels.map((p) => p.minValue);
   let my_level = min_value.filter((value) => {
@@ -197,15 +190,13 @@ function quizResult() {
       <p class="text-result">${level_selected.text}</p>
       </div>    
     </div>
-    <button class="reload-button">Reiniciar Quiz</button>
-    <p class="go-back-button" onclick="getQuizzes()">Voltar pra home</p>
-    `;
+    <button class="reload-button" onclick="reload();"6>Reiniciar Quiz</button>
+    <p class="go-back-button" onclick="listQuizzes()">Voltar pra home</p>
+
+  `;
+    scrollToCard2(document.querySelector("#result-box"), 2000);
   }
 }
-
-scrollToCard2(document.querySelector("#result-box"), 2000);
-
-frame_2(); // função de teste  para a tela 2
 
 //============== TELA 03 ==============//
 
@@ -269,7 +260,9 @@ function checkQuizzBasicInfo() {
     wrongBackground.classList.add("wrong-input-background");
   } else {
     document.querySelector(".wrong-title").classList.add("hidden");
-    document.querySelector(".basic-info.title").classList.remove("wrong-input-background");
+    document
+      .querySelector(".basic-info.title")
+      .classList.remove("wrong-input-background");
   }
 
   if (!checkURL(CREATED_QUIZZ.image)) {
@@ -279,42 +272,52 @@ function checkQuizzBasicInfo() {
     const wrongBackground = document.querySelector(".basic-info.url");
 
     if (wrongUrl.classList.contains("hidden"))
-    wrongUrl.classList.remove("hidden");
+      wrongUrl.classList.remove("hidden");
     wrongBackground.classList.add("wrong-input-background");
   } else {
     document.querySelector(".wrong-url").classList.add("hidden");
-    document.querySelector(".basic-info.url").classList.remove("wrong-input-background");
+    document
+      .querySelector(".basic-info.url")
+      .classList.remove("wrong-input-background");
   }
 
   if (CREATED_QUIZZ.qttQuestions < 3) {
     errorCounter++;
 
     const wrongQuestionQtt = document.querySelector(".wrong-questionNumber");
-    const wrongBackground = document.querySelector(".basic-info.quantity-questions");
+    const wrongBackground = document.querySelector(
+      ".basic-info.quantity-questions"
+    );
 
     if (wrongQuestionQtt.classList.contains("hidden"))
-    wrongQuestionQtt.classList.remove("hidden");
+      wrongQuestionQtt.classList.remove("hidden");
     wrongBackground.classList.add("wrong-input-background");
   } else {
     document.querySelector(".wrong-questionNumber").classList.add("hidden");
-    document.querySelector(".basic-info.quantity-questions").classList.remove("wrong-input-background");
+    document
+      .querySelector(".basic-info.quantity-questions")
+      .classList.remove("wrong-input-background");
   }
 
   if (CREATED_QUIZZ.qttLevels < 2) {
     errorCounter++;
 
     const wrongLevelQtt = document.querySelector(".wrong-levelNumber");
-    const wrongBackground = document.querySelector(".basic-info.quantity-levels");
+    const wrongBackground = document.querySelector(
+      ".basic-info.quantity-levels"
+    );
 
     if (wrongLevelQtt.classList.contains("hidden"))
-    wrongLevelQtt.classList.remove("hidden");
+      wrongLevelQtt.classList.remove("hidden");
     wrongBackground.classList.add("wrong-input-background");
   } else {
     document.querySelector(".wrong-levelNumber").classList.add("hidden");
-    document.querySelector(".basic-info.quantity-levels").classList.remove("wrong-input-background");
+    document
+      .querySelector(".basic-info.quantity-levels")
+      .classList.remove("wrong-input-background");
   }
 
-  console.log(errorCounter)
+  console.log(errorCounter);
   return errorCounter++;
 }
 
@@ -630,7 +633,6 @@ function randOrd() {
   //função para embaralhar as respostas
   return Math.round(Math.random()) - 0.5;
 }
-
 function checkURL(url) {
   const rule =
     /(https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|www\.[a-zA-Z0-9][a-zA-Z0-9-]+[a-zA-Z0-9]\.[^\s]{2,}|https?:\/\/(?:www\.|(?!www))[a-zA-Z0-9]+\.[^\s]{2,}|www\.[a-zA-Z0-9]+\.[^\s]{2,})/;

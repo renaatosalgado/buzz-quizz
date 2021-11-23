@@ -309,7 +309,6 @@ span.quiz-title {
 .question-container {
   padding: 30px;
   margin: 0 auto;
-  height: 676px;
   width: 759px;
   margin-top: 42px;
   box-shadow: 0px 0px 10px 0px #0000000d;
@@ -596,6 +595,10 @@ p.quizz-not-created {
   cursor: pointer;
 }
 
+.hidden{
+  display: none;
+}
+
 @media (max-width: 1100px) {
   .app {
     width: 100%;
@@ -604,7 +607,7 @@ p.quizz-not-created {
 
   .your-quizzes.not-created {
     width: 90%;
-    height: 100%;
+    height: 181px;
   }
 
   .your-quizzes.created {
