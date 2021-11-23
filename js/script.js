@@ -1,18 +1,16 @@
 const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
-const QUIZZES_API ="https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
+const QUIZZES_API = "https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes";
 const APP = document.querySelector(".app");
-let serverQuizz= undefined
-let quizzes
+let serverQuizz = undefined;
+let quizzes;
 let database1;
 
-listQuizzes()
+listQuizzes();
 //============== TELA 01 ==============//
-function listQuizzes(){
-  
-const yourQuizzes = getQuizzesLocalStorage()
-console.log(yourQuizzes)
-APP.innerHTML = 
-    `
+function listQuizzes() {
+  const yourQuizzes = getQuizzesLocalStorage();
+  console.log(yourQuizzes);
+  APP.innerHTML = `
       <div class="your-quizzes not-created">
         <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
         <button class="create-quizz-btn" data-identifier="create-quizz" onclick="generateQuizz()">Criar Quizz</button>
@@ -21,52 +19,51 @@ APP.innerHTML =
         <p class="all-quizzes-title">Todos os Quizzes</>
         <div class="general-quizzes-list"></div>
       </div>
-    ` 
+    `;
 
-if(yourQuizzes.length!==0){
-  const yourQuizzesElement = document.querySelector('.your-quizzes')
+  if (yourQuizzes.length !== 0) {
+    const yourQuizzesElement = document.querySelector(".your-quizzes");
 
-  yourQuizzesElement.innerHTML = 
-  `
+    yourQuizzesElement.innerHTML = `
     <div class="your-quizzes">
       <div class="your-quizzes-header">
         <p class="">Seus Quizzes</p>
-        <ion-icon name="add-circle" class=""></ion-icon>
+        <ion-icon name="add-circle" class="add-quizz-btn" onclick="generateQuizz();"></ion-icon>
       </div>
       <div class="your-quizzes-list"></div>
     </div>  
-    `
-    yourQuizzesElement.classList.replace('not-created','created')
-    const yourQuizzesList = document.querySelector('.your-quizzes-list')
-    for(let i=0; i<yourQuizzes.length; i++){
-      let yourQuizz = yourQuizzes[i]
+    `;
+    yourQuizzesElement.classList.replace("not-created", "created");
+    const yourQuizzesList = document.querySelector(".your-quizzes-list");
+    for (let i = 0; i < yourQuizzes.length; i++) {
+      let yourQuizz = yourQuizzes[i];
 
-      yourQuizzesList.innerHTML = 
-      `
+      yourQuizzesList.innerHTML = `
         <div class="your-quizz" onclick="loadQuiz(this)">
             <img src='${yourQuizz.image}'/>
             <div class="gradient"></div>
             <p class="quizz-title">${yourQuizz.title} </p>
             <span class="hidden">${yourQuizz.id}</span>
         </div>      
-      `
+      `;
     }
+  }
+
+  const promise = axios.get(
+    "https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
+  );
+  promise.then(loadQuizzes);
 }
 
-  const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes')
-  promise.then(loadQuizzes)
-}
+function loadQuizzes(answer) {
+  console.log(answer);
+  quizzes = answer.data;
+  const allQuizzes = document.querySelector(".general-quizzes-list");
+  for (let i = 0; i < quizzes.length; i++) {
+    serverQuizz = quizzes[i];
 
-function loadQuizzes(answer){
-  console.log(answer)
-  quizzes = answer.data
-  const allQuizzes = document.querySelector('.general-quizzes-list')
-  for(let i=0; i<quizzes.length; i++){
-    serverQuizz = quizzes[i]
-
-    if('questions' in serverQuizz){
-      allQuizzes.innerHTML += 
-      `
+    if ("questions" in serverQuizz) {
+      allQuizzes.innerHTML += `
         <div class="server-quizz" onclick="loadQuiz(this)">
           <img src='${serverQuizz.image}'/>
           <div class="gradient">
@@ -74,72 +71,66 @@ function loadQuizzes(answer){
           <p class="quizz-title">${serverQuizz.title}</p>
           <span class="hidden">${serverQuizz.id}</span>
         </div>
-      `
+      `;
     }
   }
 }
 
-
 //============== TELA 02 ==============//
 
-
 ///variaveis globais da tela 2
-let quiz_point=0;//variável de pontuação
-let prommisse_quiz_selected=axios.get(QUIZZES_API);
+let quiz_point = 0; //variável de pontuação
+let prommisse_quiz_selected = axios.get(QUIZZES_API);
 let quiz_data; //dados da requisição, todos os quizzes
 let quiz_selecionado; //somnete o quiz selecioando no array acima
 let result;
-let counter=0;
+let counter = 0;
 let levels;
 
-
-function onSelectedAnswer(element){ //função da dinamica das repostas
+function onSelectedAnswer(element) {
+  //função da dinamica das repostas
   counter++;
-  element.classList.add(".selecionado")
-  let myElementParent = (element.parentNode).querySelector("#true");
- 
-  (element.parentNode).classList.remove("normal-style")
-  console.log("clique")
+  element.classList.add(".selecionado");
+  let myElementParent = element.parentNode.querySelector("#true");
 
-  element.classList.add("selected")
+  element.parentNode.classList.remove("normal-style");
+  console.log("clique");
 
-  if(element==myElementParent){
+  element.classList.add("selected");
+
+  if (element == myElementParent) {
     quiz_point++;
-    
+  } else {
   }
-  else{
+  element.parentNode.classList.add("transparent");
+  let next_element =
+    element.parentNode.parentNode.nextSibling.nextElementSibling;
+  console.log(next_element);
+  if (next_element != null) {
+    scrollToCard2(next_element, 2000);
+  }
 
-  }
-  (element.parentNode).classList.add("transparent")
-  let next_element = ((element.parentNode).parentNode.nextSibling.nextElementSibling)
-  console.log(next_element)
-  if(next_element!=null) 
-  {
-    scrollToCard2(next_element,2000)
-  }
-  
-  quizResult()
+  quizResult();
 }
-function loadQuiz(response){//função que carrega um quiz  
-  result =0;
-  counter=0;
-  levels=0;
-  quiz_point=0;
+function loadQuiz(response) {
+  //função que carrega um quiz
+  result = 0;
+  counter = 0;
+  levels = 0;
+  quiz_point = 0;
   database1 = response;
-  
-  
-  quiz_data=response.querySelector('span').innerHTML;
+
+  quiz_data = response.querySelector("span").innerHTML;
   //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
   //console.log(quiz_selecionado);
-  quiz_selecionado= quizzes.filter(p => p.id==quiz_data)[0]//aqui podemos selecionar por id
+  quiz_selecionado = quizzes.filter((p) => p.id == quiz_data)[0]; //aqui podemos selecionar por id
   console.log(quiz_selecionado);
-  let questions = quiz_selecionado.questions; // aqui vai as questões 
+  let questions = quiz_selecionado.questions; // aqui vai as questões
   levels = quiz_selecionado.levels;
   //let answers = (questions[0].answers).sort(randOrd) // aqui vai as respostas refererente a  questão 0
   console.log(quiz_selecionado);
 
-  
-  APP.innerHTML=`   
+  APP.innerHTML = `   
     <div class="top-quiz-container">
     <img class ="icon-main-image"src="${quiz_selecionado.image}" alt="">
     <span  class="quiz-title">${quiz_selecionado.title}</span>
@@ -148,45 +139,48 @@ function loadQuiz(response){//função que carrega um quiz
     </div>
   `;
   document.querySelector(".quiz-container").scrollIntoView();
-  for(let i=0;i<questions.length;i++){
-    let answers = (questions[i].answers).sort(randOrd)
+  for (let i = 0; i < questions.length; i++) {
+    let answers = questions[i].answers.sort(randOrd);
 
-    APP.querySelector(".quiz-container").innerHTML +=
-    `
+    APP.querySelector(".quiz-container").innerHTML += `
     <div class="question-container">
       <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
       <div class="quiz-answers normal-style">
       </div>
     </div>    
-    `
+    `;
 
-    for(let p=0;p<answers.length;p++){
-      APP.querySelector(".quiz-container").lastElementChild.querySelector(".quiz-answers").innerHTML+=
-       `        
+    for (let p = 0; p < answers.length; p++) {
+      APP.querySelector(".quiz-container").lastElementChild.querySelector(
+        ".quiz-answers"
+      ).innerHTML += `        
       <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[p].isCorrectAnswer}">
         <img src="${answers[p].image}" alt="">
         <p class="normal-style">${answers[p].text}</p>
       </div>
-      `
+      `;
     }
-   
-}}
-function reload(){
+  }
+}
+function reload() {
   loadQuiz(database1);
 }
-function quizResult(){
-  let total_points= quiz_selecionado.questions.length;
-  result = Math.ceil((quiz_point/total_points)*100)
+function quizResult() {
+  let total_points = quiz_selecionado.questions.length;
+  result = Math.ceil((quiz_point / total_points) * 100);
   let levels = quiz_selecionado.levels;
-  const min_value = levels.map(p => p.minValue);
-  let my_level = min_value.filter((value)=>{return value<=result})
-  console.log(my_level)
-  let level_selected = levels[my_level.length-1]
+  const min_value = levels.map((p) => p.minValue);
+  let my_level = min_value.filter((value) => {
+    return value <= result;
+  });
+  console.log(my_level);
+  let level_selected = levels[my_level.length - 1];
 
-  if(quiz_selecionado.questions.length==counter){//quando finalizar
-    
+  if (quiz_selecionado.questions.length == counter) {
+    //quando finalizar
+
     console.log("result");
-    APP.querySelector(".quiz-container").innerHTML+=`   
+    APP.querySelector(".quiz-container").innerHTML += `   
     <div class="question-container" id="result-box">
       <div class="result-title-container">
       <p>${result} % de acerto: ${level_selected.title} </p>
@@ -200,10 +194,8 @@ function quizResult(){
     <p class="go-back-button" onclick="listQuizzes()">Voltar pra home</p>
 
   `;
-  scrollToCard2(document.querySelector("#result-box"),2000)
+    scrollToCard2(document.querySelector("#result-box"), 2000);
   }
-
-
 }
 
 //============== TELA 03 ==============//
@@ -224,10 +216,14 @@ function generateQuizz() {
     <div class="page-create-quizz">
       <div class="title">Comece pelo começo</div>
       <div class="entries">
-          <input type="text" class="title" placeholder="Título do seu quizz">
-          <input type="text" class="url" placeholder="URL da imagem do seu quizz">
-          <input type="number" class="quantity-questions" placeholder="Quantidade de perguntas do quizz">
-          <input type="number" class="quantity-levels" placeholder="Quantidade de níveis do quizz">
+        <input type="text" class="title basic-info" placeholder="Título do seu quizz">
+        <div class="wrong-input-message wrong-title hidden">O título deve possuir de 20 a 65 caracteres</div>
+        <input type="text" class="url basic-info" placeholder="URL da imagem do seu quizz">
+        <div class="wrong-input-message wrong-url hidden">O valor informado não é uma URL válida</div>
+        <input type="number" class="quantity-questions basic-info" placeholder="Quantidade de perguntas do quizz">
+        <div class="wrong-input-message wrong-questionNumber hidden">O quizz deve ter no mínimo 3 perguntas</div>
+        <input type="number" class="quantity-levels basic-info" placeholder="Quantidade de níveis do quizz">
+        <div class="wrong-input-message wrong-levelNumber hidden">O quizz deve ter no mínimo 2 níveis de classificação</div>
       </div>
       <button class="proceed" onclick="generateQuestions()">Prosseguir pra criar perguntas</button>
     </div>
@@ -251,22 +247,83 @@ function saveQuizzBasicInfo() {
 function checkQuizzBasicInfo() {
   saveQuizzBasicInfo();
 
+  let errorCounter = 0;
+
   if (CREATED_QUIZZ.title.length < 20 || CREATED_QUIZZ.title.length > 65) {
-    return false;
-  } else if (!checkURL(CREATED_QUIZZ.image)) {
-    return false;
-  } else if (CREATED_QUIZZ.qttQuestions < 3) {
-    return false;
-  } else if (CREATED_QUIZZ.qttLevels < 2) {
-    return false;
+    errorCounter++;
+
+    const wrongTitle = document.querySelector(".wrong-title");
+    const wrongBackground = document.querySelector(".basic-info.title");
+
+    if (wrongTitle.classList.contains("hidden"))
+      wrongTitle.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-title").classList.add("hidden");
+    document
+      .querySelector(".basic-info.title")
+      .classList.remove("wrong-input-background");
   }
-  return true;
+
+  if (!checkURL(CREATED_QUIZZ.image)) {
+    errorCounter++;
+
+    const wrongUrl = document.querySelector(".wrong-url");
+    const wrongBackground = document.querySelector(".basic-info.url");
+
+    if (wrongUrl.classList.contains("hidden"))
+      wrongUrl.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-url").classList.add("hidden");
+    document
+      .querySelector(".basic-info.url")
+      .classList.remove("wrong-input-background");
+  }
+
+  if (CREATED_QUIZZ.qttQuestions < 3) {
+    errorCounter++;
+
+    const wrongQuestionQtt = document.querySelector(".wrong-questionNumber");
+    const wrongBackground = document.querySelector(
+      ".basic-info.quantity-questions"
+    );
+
+    if (wrongQuestionQtt.classList.contains("hidden"))
+      wrongQuestionQtt.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-questionNumber").classList.add("hidden");
+    document
+      .querySelector(".basic-info.quantity-questions")
+      .classList.remove("wrong-input-background");
+  }
+
+  if (CREATED_QUIZZ.qttLevels < 2) {
+    errorCounter++;
+
+    const wrongLevelQtt = document.querySelector(".wrong-levelNumber");
+    const wrongBackground = document.querySelector(
+      ".basic-info.quantity-levels"
+    );
+
+    if (wrongLevelQtt.classList.contains("hidden"))
+      wrongLevelQtt.classList.remove("hidden");
+    wrongBackground.classList.add("wrong-input-background");
+  } else {
+    document.querySelector(".wrong-levelNumber").classList.add("hidden");
+    document
+      .querySelector(".basic-info.quantity-levels")
+      .classList.remove("wrong-input-background");
+  }
+
+  console.log(errorCounter);
+  return errorCounter++;
 }
 
 function generateQuestions() {
   const valid = checkQuizzBasicInfo();
-  if (!valid) {
-    alert("Preencha os campos corretamente!");
+  if (valid !== 0) {
     return;
   }
 
@@ -576,8 +633,9 @@ function generateLevels() {
 }
 
 //============== AUX FUNCTIONS ==============//
-function randOrd(){ //função para embaralhar as respostas
-  return (Math.round(Math.random())-0.5);
+function randOrd() {
+  //função para embaralhar as respostas
+  return Math.round(Math.random()) - 0.5;
 }
 function checkURL(url) {
   const rule =
@@ -590,14 +648,13 @@ function checkColor(color) {
   return rule.test(color);
 }
 
-function scrollToCard2(element,time) {
+function scrollToCard2(element, time) {
   function scroll() {
     element.scrollIntoView({ behavior: "smooth" });
   }
 
   setTimeout(scroll, time);
 }
-
 
 function scrollToCard(element) {
   function scroll() {

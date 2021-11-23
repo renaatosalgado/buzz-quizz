@@ -87,10 +87,15 @@ body {
   padding: 12px;
   border: 1px solid #d1d1d1;
   border-radius: 5px;
+  font-size: 19px;
 }
 
 .entries input:not(:last-child) {
   margin-bottom: 9px;
+}
+
+.wrong-input-background {
+  background-color: #FFE9E9;
 }
 
 .entries input::placeholder {
@@ -210,6 +215,17 @@ body {
   color: white;
   font-size: 19px;
   word-break: break-all;
+}
+
+.hidden {
+  display: none;
+}
+
+.wrong-input-message {
+  font-size: 16px;
+  color: #EC362D;
+  font-weight: 400;
+  margin-bottom: 6px;
 }
 
 /* FIM DA TELA 03*/
@@ -417,6 +433,10 @@ div .answer.selected {
 /*Aqui para cima estilo page 2*/
 
 /******************** Tela 1 *******************/
+
+.add-quizz-btn {
+  cursor: pointer;
+}
 
 .your-quizzes.created {
   width: 1050px;
