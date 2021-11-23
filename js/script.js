@@ -193,7 +193,7 @@ function quizResult(){
       </div>    
     </div>
     <button class="reload-button">Reiniciar Quiz</button>
-    <p class="go-back-button" onclick="getQuizzes()">Voltar pra home</p>
+    <p class="go-back-button" onclick="listQuizzes()">Voltar pra home</p>
 
   `;
   scrollToCard2(document.querySelector("#result-box"),2000)
