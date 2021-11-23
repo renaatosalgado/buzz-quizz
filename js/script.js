@@ -5,10 +5,23 @@ let serverQuizz = undefined;
 let quizzes;
 let database1;
 
-listQuizzes();
+getQuizzes();
 //============== TELA 01 ==============//
-function listQuizzes() {
+
+let USER_QUIZZES_IDS = [];
+
+function getQuizzes() {
+  const promise = axios.get(`${URL_API}/quizzes`);
+  promise.then(listQuizzes);
+}
+
+function listQuizzes(response) {
   const yourQuizzes = getQuizzesLocalStorage();
+
+  USER_QUIZZES_IDS = yourQuizzes.map((quizz) => quizz.id);
+  const filteresQuizzesIds = filterQuizzes(response.data);
+
+  console.log(filteresQuizzesIds)
 
   APP.innerHTML = `
       <div class="your-quizzes not-created">
@@ -39,7 +52,7 @@ function listQuizzes() {
     for (let i = 0; i < yourQuizzes.length; i++) {
       let yourQuizz = yourQuizzes[i];
 
-      yourQuizzesList.innerHTML = `
+      yourQuizzesList.innerHTML += `
         <div class="your-quizz" onclick="loadQuiz(this)">
             <img src='${yourQuizz.image}'/>
             <div class="gradient"></div>
@@ -54,6 +67,27 @@ function listQuizzes() {
     "https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
   );
   promise.then(loadQuizzes);
+}
+
+function filterQuizzes(quizzes) {
+  let user = [];
+  let others = [];
+
+  user = quizzes.filter(function (quizz) {
+    if (USER_QUIZZES_IDS.includes(quizz.id)) {
+      return true;
+    }
+  });
+  others = quizzes.filter(function (quizz) {
+    if (!USER_QUIZZES_IDS.includes(quizz.id)) {
+      return true;
+    }
+  });
+
+  return {
+    user,
+    others,
+  };
 }
 
 function loadQuizzes(answer) {
@@ -143,7 +177,7 @@ function loadQuiz(response) {
     let answers = questions[i].answers.sort(randOrd);
 
     APP.querySelector(".quiz-container").innerHTML += `
-    <div class="question-container">
+    <div class="question-container" data-identifier="question">
       <div style="background-color: ${questions[i].color}" class="question-title"><span>${questions[i].title}</span></div>
       <div class="quiz-answers normal-style">
       </div>
@@ -154,8 +188,8 @@ function loadQuiz(response) {
       APP.querySelector(".quiz-container").lastElementChild.querySelector(
         ".quiz-answers"
       ).innerHTML += `        
-      <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[p].isCorrectAnswer}">
-        <img src="${answers[p].image}" alt="">
+      <div class="answer" onclick="onSelectedAnswer(this)" id="${answers[p].isCorrectAnswer}" data-identifier="answer">
+        <img class = "answer-img"src="${answers[p].image}" alt="">
         <p class="normal-style">${answers[p].text}</p>
       </div>
       `;
@@ -182,7 +216,7 @@ function quizResult() {
   if (quiz_selecionado.questions.length == counter) {
 
     APP.querySelector(".quiz-container").innerHTML += `   
-    <div class="question-container" id="result-box">
+    <div class="question-container" id="result-box"  data-identifier="quizz-result">
       <div class="result-title-container">
       <p>${result} % de acerto: ${level_selected.title} </p>
       </div>
@@ -192,7 +226,7 @@ function quizResult() {
       </div>    
     </div>
     <button class="reload-button" onclick="reload()"6>Reiniciar Quizz</button>
-    <p class="go-back-button" onclick="listQuizzes()">Voltar pra home</p>
+    <p class="go-back-button" onclick="getQuizzes()">Voltar pra home</p>
 
   `;
     scrollToCard2(document.querySelector("#result-box"), 2000);
@@ -365,12 +399,12 @@ function generateQuestionCard(index) {
     <div class="question entries ${questionClass}">
       <div class="title-card">
         <div class="label">Pergunta ${index + 1}</div>
-        <div class="toggle" onclick="showItem(this), scrollToCard(this)">
+        <div class="toggle" onclick="showItem(this), scrollToCard(this)" data-identifier="expand">
           <ion-icon name="create-outline"></ion-icon>
         </div>
       </div>
 
-      <div class="body-card">
+      <div class="body-card" data-identifier="question">
         <input type="text" class="question-${index}-text" placeholder="Texto da pergunta" />
         <input type="text" class="question-${index}-color" placeholder="Cor de fundo da pergunta" />
 
@@ -486,12 +520,12 @@ function generateLevelCard(index) {
     <div class="level entries ${levelClass}">
       <div class="title-card">
         <div class="label">Nível ${index + 1}</div>
-        <div class="toggle" onclick="showItem(this), scrollToCard(this)">
+        <div class="toggle" onclick="showItem(this), scrollToCard(this)" data-identifier="expand">
           <ion-icon name="create-outline"></ion-icon>
         </div>
       </div>
 
-      <div class="body-card">
+      <div class="body-card" data-identifier="level">
         <input type="text" class="level-${index}-title" placeholder="Título do nível" />
         <input type="text" class="level-${index}-success" placeholder="% de acerto mínima" />
         <input type="text" class="level-${index}-url" placeholder="URL da imagem do nível" />
@@ -546,14 +580,15 @@ function createQuizzSuccess(id) {
     <div class="page-create-quizz">
       <div class="title">Seu quizz está pronto!</div>
 
-      <div class="quizz" onclick="showQuizz(${id})">
+      <div class="quizz" onclick="loadQuiz(this)">
         <img src="${CREATED_QUIZZ.image}">
         <div class="overlay"></div>
         <div class="title">${CREATED_QUIZZ.title}</div>
+        <span class="hidden">${id}</span>
       </div>
 
-      <button class="access-quizz" onclick="loadQuiz()">Acessar Quizz</button>
-      <button class="go-back" onclick="listQuizzes()">Voltar pra home</button>
+      <button class="access-quizz" onclick="loadQuiz("<span class="hidden">${id}</span>")">Acessar Quizz</button>
+      <button class="go-back" onclick="getQuizzes()">Voltar pra home</button>
     </div>  
   `;
 }
@@ -576,6 +611,8 @@ function saveQuizzLocalStorage(res) {
 
   localData.push({
     id: quizz.id,
+    image: quizz.image,
+    title: quizz.title,
     key: quizz.key,
   });
 

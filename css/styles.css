@@ -432,7 +432,7 @@ span.quiz-title {
     margin-top: 20px;
   }
   .answer img {
-    height: 70%;
+    height: 100%;
     width: 100%;
     object-fit: cover;
   }
