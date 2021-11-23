@@ -8,32 +8,50 @@ let database1;
 listQuizzes()
 //============== TELA 01 ==============//
 function listQuizzes(){
-  APP.innerHTML = 
-  `
-    <div class="your-quizzes not-created">
-      <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
-      <button class="create-quizz-btn" data-identifier="create-quizz" onclick="generateQuizz()">Criar Quizz</button>
-    </div>
-    <div class="general-quizzes" data-identifier="general-quizzes">
-    <p class="all-quizzes-title">Todos os Quizzes</>
-    <div class="general-quizzes-list"></div>
-    </div>
-  ` 
-// CÓDIGO A SER ADICIONADO QUANDO HOUVER QUIZZES CRIADOS
-  // let yourQuizzes = 
-  // `
-  //   <div class="your-quizzes">
-  //     <div class="your-quizzes-header">
-  //       <p class="">Seus Quizzes</p>
-  //       <ion-icon name="add-circle" class=""></ion-icon>
-  //     </div>
-  //     <div class="your-quizzes-list"></div>
-  //   </div>
-  // `
-  // const createQuizzMenu = document.querySelector('.your-quizzes')
-  // createQuizzMenu.innerHTML = yourQuizzes
-  // createQuizzMenu.classList.replace('not-created','created')
+  
+const yourQuizzes = getQuizzesLocalStorage()
+console.log(yourQuizzes)
+APP.innerHTML = 
+    `
+      <div class="your-quizzes not-created">
+        <p class="quizz-not-created">Você não criou nenhum quizz ainda :(</p>
+        <button class="create-quizz-btn" data-identifier="create-quizz" onclick="generateQuizz()">Criar Quizz</button>
+      </div>
+      <div class="general-quizzes" data-identifier="general-quizzes">
+        <p class="all-quizzes-title">Todos os Quizzes</>
+        <div class="general-quizzes-list"></div>
+      </div>
+    ` 
 
+if(yourQuizzes.length!==0){
+  const yourQuizzesElement = document.querySelector('.your-quizzes')
+
+  yourQuizzesElement.innerHTML = 
+  `
+    <div class="your-quizzes">
+      <div class="your-quizzes-header">
+        <p class="">Seus Quizzes</p>
+        <ion-icon name="add-circle" class=""></ion-icon>
+      </div>
+      <div class="your-quizzes-list"></div>
+    </div>  
+    `
+    yourQuizzesElement.classList.replace('not-created','created')
+    const yourQuizzesList = document.querySelector('.your-quizzes-list')
+    for(let i=0; i<yourQuizzes.length; i++){
+      let yourQuizz = yourQuizzes[i]
+
+      yourQuizzesList.innerHTML = 
+      `
+        <div class="your-quizz" onclick="loadQuiz(this)">
+            <img src='${yourQuizz.image}'/>
+            <div class="gradient"></div>
+            <p class="quizz-title">${yourQuizz.title} </p>
+            <span class="hidden">${yourQuizz.id}</span>
+        </div>      
+      `
+    }
+}
 
   const promise = axios.get('https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes')
   promise.then(loadQuizzes)
@@ -43,7 +61,6 @@ function loadQuizzes(answer){
   console.log(answer)
   quizzes = answer.data
   const allQuizzes = document.querySelector('.general-quizzes-list')
-  const yourQuizzes = document.querySelector('.your-quizzes-list')
   for(let i=0; i<quizzes.length; i++){
     serverQuizz = quizzes[i]
 
@@ -58,24 +75,10 @@ function loadQuizzes(answer){
           <span class="hidden">${serverQuizz.id}</span>
         </div>
       `
-      // Forçando quizzes criados pelo usuário. Feito para testes
-      
-      // yourQuizzes.innerHTML += 
-      // `
-      // <div class="your-quizz" onclick="screen2(this)">
-      //     <img src='${serverQuizz.image}'/>
-      //     <div class="gradient">
-      //     </div>
-      //     <p class="quizz-title">${serverQuizz.title} </p>
-      //   </div>
-      // `
     }
   }
 }
 
-
-
-//listQuizzes()
 
 //============== TELA 02 ==============//
 
