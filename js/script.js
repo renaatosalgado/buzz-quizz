@@ -2,6 +2,7 @@ const URL_API = "https://mock-api.bootcamp.respondeai.com.br/api/v4/buzzquizz";
 const QUIZZES_API ="https://mock-api.driven.com.br/api/v4/buzzquizz/quizzes"
 const APP = document.querySelector(".app");
 let serverQuizz= undefined
+let quizzes
 
 
 listQuizzes()
@@ -40,7 +41,7 @@ function listQuizzes(){
 
 function loadQuizzes(answer){
   console.log(answer)
-  let quizzes = answer.data
+  quizzes = answer.data
   const allQuizzes = document.querySelector('.general-quizzes-list')
   const yourQuizzes = document.querySelector('.your-quizzes-list')
   for(let i=0; i<quizzes.length; i++){
@@ -54,7 +55,7 @@ function loadQuizzes(answer){
           <div class="gradient">
           </div>
           <p class="quizz-title">${serverQuizz.title}</p>
-          <span class="hidden">${serverQuizz.id}
+          <span class="hidden">${serverQuizz.id}</span>
         </div>
       `
       // Forçando quizzes criados pelo usuário. Feito para testes
@@ -117,16 +118,13 @@ function onSelectedAnswer(element){ //função da dinamica das repostas
   
   quizResult()
 }
-function loadQuiz(response){//função que carrega um quiz
-  console.dir(response)
+function loadQuiz(response){//função que carrega um quiz  
 
   
-
-  
-  quiz_data=response.data;
+  quiz_data=response.querySelector('span').innerHTML;
   //quiz_selecionado=quiz_data[];// aqui vai o quiz selecionado - oelo indice array data
   //console.log(quiz_selecionado);
-  quiz_selecionado= quiz_data.filter(p => p.id=="635")[0]//aqui podemos selecionar por id
+  quiz_selecionado= quizzes.filter(p => p.id==quiz_data)[0]//aqui podemos selecionar por id
   console.log(quiz_data);
   let questions = quiz_selecionado.questions; // aqui vai as questões 
   levels = quiz_selecionado.levels;
